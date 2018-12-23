@@ -1,0 +1,41 @@
+{
+  "defaultSeverity": "error",
+  "extends": [
+    "tslint:recommended",
+    "tslint-config-airbnb"
+  ],
+  "rulesDirectory": [
+    "src"
+  ],
+  "rules": {
+    "quotemark": [true, "double"],
+    "no-parameter-reassignment": false,
+    "prefer-array-literal": false,
+    "variable-name": false,
+    "function-name": false,
+    "import-name": false,
+    "interface-name": false,
+    "member-ordering": [
+      true,
+      {
+        "order": [
+          "private-static-field",
+          "protected-static-field",
+          "public-static-field",
+          "private-static-method",
+          "protected-static-method",
+          "public-static-method",
+          "private-instance-field",
+          "protected-instance-field",
+          "public-instance-field",
+          "private-constructor",
+          "protected-constructor",
+          "public-constructor",
+          "private-instance-method",
+          "protected-instance-method",
+          "public-instance-method"
+        ]
+      }
+    ]
+  }
+}
