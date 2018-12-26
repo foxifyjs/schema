@@ -22,67 +22,67 @@ class StringType extends AnyType<string> {
 
   get token() {
     return this._test(value => !/^[a-zA-Z0-9_]*$/.test(value) ?
-      `Must only contain a-z, A-Z, 0-9, and underscore (_)` : null);
+      `Must only contain a-z, A-Z, 0-9, and underscore (_)` : {});
   }
 
   get alphanum() {
     return this._test(value => !/^[a-zA-Z0-9]*$/.test(value) ?
-      `Must only contain a-z, A-Z, 0-9` : null);
+      `Must only contain a-z, A-Z, 0-9` : {});
   }
 
   get numeral() {
     return this._test(value => !/^[0-9]*$/.test(value)
-      ? `Must only contain numbers` : null);
+      ? `Must only contain numbers` : {});
   }
 
   get ip() {
     return this._test(value => !(ipv4Regex.test(value) || ipv6Regex.test(value)) ?
-      `Must be an ipv4 or ipv6` : null);
+      `Must be an ipv4 or ipv6` : {});
   }
 
   get ipv4() {
-    return this._test(value => !ipv4Regex.test(value) ? `Must be an ipv4` : null);
+    return this._test(value => !ipv4Regex.test(value) ? `Must be an ipv4` : {});
   }
 
   get ipv6() {
-    return this._test(value => !ipv6Regex.test(value) ? `Must be an ipv6` : null);
+    return this._test(value => !ipv6Regex.test(value) ? `Must be an ipv6` : {});
   }
 
   get email() {
     return this._test(value => !/^\w[\w\.]+@\w+?\.[a-zA-Z]{2,3}$/.test(value)
-      ? "Must be an email address" : null);
+      ? "Must be an email address" : {});
   }
 
   get creditCard() {
     return this._test(value => !CreditCard.verify(value)
-      ? "Must be a credit-card" : null);
+      ? "Must be a credit-card" : {});
   }
 
   public min(num: number) {
     assert(isNumber(num), "'num' must be a number");
     assert(num >= 0, "'num' must be a positive number");
 
-    return this._test(value => value.length < num ? `Must be at least ${num} characters` : null);
+    return this._test(value => value.length < num ? `Must be at least ${num} characters` : {});
   }
 
   public max(num: number) {
     assert(isNumber(num), "'num' must be a number");
     assert(num >= 0, "'num' must be a positive number");
 
-    return this._test(value => value.length > num ? `Must be at most ${num} characters` : null);
+    return this._test(value => value.length > num ? `Must be at most ${num} characters` : {});
   }
 
   public length(num: number) {
     assert(isNumber(num), "'num' must be a number");
     assert(num >= 0, "'num' must be a positive number");
 
-    return this._test(value => value.length !== num ? `Must be exactly ${num} characters` : null);
+    return this._test(value => value.length !== num ? `Must be exactly ${num} characters` : {});
   }
 
   public regex(regex: RegExp) {
     assert(regex instanceof RegExp, "'regex' must be a regex");
 
-    return this._test(value => !regex.test(value) ? `Must match ${regex}` : null);
+    return this._test(value => !regex.test(value) ? `Must match ${regex}` : {});
   }
 
   public enum(enums: string[]) {
@@ -90,16 +90,16 @@ class StringType extends AnyType<string> {
 
     const TYPE = JSON.stringify(enums);
 
-    return this._test(value => !enums.includes(value) ? `Must be one of ${TYPE}` : null);
+    return this._test(value => !enums.includes(value) ? `Must be one of ${TYPE}` : {});
   }
 
   /******************** CASTS ********************/
 
-  public truncate(length: number) {
+  public truncate(length: number, truncateString?: string) {
     assert(isNumber(length), "'length' must be a number");
     assert(length >= 0, "'length' must be a positive number");
 
-    return this._cast(value => truncate(value, length));
+    return this._cast(value => truncate(value, length, truncateString));
   }
 
   public replace(pattern: string | RegExp, replacement: string) {

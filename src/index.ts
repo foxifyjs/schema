@@ -1,3 +1,4 @@
+import { size } from "prototyped.js/es6/object/methods";
 import ArrayType from "./Array";
 import BooleanType from "./Boolean";
 import DateType from "./Date";
@@ -5,7 +6,24 @@ import NumberType from "./Number";
 import ObjectType from "./Object";
 import StringType from "./String";
 
-export = {
+namespace Schema { }
+
+const Schema = {
+  validate: <P extends object = object>(
+    schema: object,
+    value: object,
+  ): { errors: object | null, value: P } => {
+    schema = new ObjectType().keys(schema);
+
+    const result = (schema as any)._validate("", value);
+
+    let errors: { [key: string]: string[] } | null = result.errors;
+
+    if (!size(errors as object)) errors = null;
+
+    return { errors, value: result.value };
+  },
+
   get array() {
     return new ArrayType();
   },
@@ -25,3 +43,5 @@ export = {
     return new StringType();
   },
 };
+
+export = Schema;

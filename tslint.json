@@ -10,6 +10,7 @@
   "rules": {
     "quotemark": [true, "double"],
     "no-parameter-reassignment": false,
+    "no-namespace": false,
     "prefer-array-literal": false,
     "variable-name": false,
     "function-name": false,

@@ -5,7 +5,7 @@ import { isNumber } from "prototyped.js/es6/number/methods";
 import { isString } from "prototyped.js/es6/string/methods";
 import AnyType from "./Any";
 
-class DateType extends AnyType<Date> {
+class DateType extends AnyType<Date | number | string> {
   protected static type = "Date";
 
   protected _base(value: any) {
@@ -23,29 +23,41 @@ class DateType extends AnyType<Date> {
   public min(date: Date | number | string | (() => (Date | number | string))) {
     if (isString(date) || isNumber(date)) date = new Date(date);
 
+    let generator = date as () => (Date | number | string);
+
     if (isDate(date)) {
       assert(date.toString() !== "Invalid Date");
 
-      date = () => date as Date;
+      generator = () => date as Date;
     }
 
-    return this._test(value => value < (date as (() => Date))()
-      ? `Must be at least ${date}`
-      : null);
+    return this._test((value) => {
+      const min = new Date(generator());
+
+      if (value < min) return `Must be at least ${min}`;
+
+      return {};
+    });
   }
 
   public max(date: Date | number | string | (() => (Date | number | string))) {
     if (isString(date) || isNumber(date)) date = new Date(date);
 
+    let generator = date as () => (Date | number | string);
+
     if (isDate(date)) {
       assert(date.toString() !== "Invalid Date");
 
-      date = () => date as Date;
+      generator = () => date as Date;
     }
 
-    return this._test(value => value > (date as (() => Date))()
-      ? `Must be at most ${date}`
-      : null);
+    return this._test((value) => {
+      const max = new Date(generator());
+
+      if (value > max) return `Must be at most ${max}`;
+
+      return {};
+    });
   }
 }
 

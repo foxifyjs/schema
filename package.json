@@ -31,6 +31,10 @@
     "coverage": "npm test -- --coverage",
     "codecov": "npm run coverage && codecov"
   },
+  "dependencies": {
+    "prototyped.js": "^0.21.0",
+    "verifications": "^0.3.0"
+  },
   "devDependencies": {
     "@types/jest": "^23.3.10",
     "@types/node": "^10.12.18",
@@ -41,8 +45,17 @@
     "tslint-config-airbnb": "^5.11.1",
     "typescript": "^3.2.2"
   },
-  "dependencies": {
-    "prototyped.js": "^0.21.0",
-    "verifications": "^0.3.0"
+  "jest": {
+    "moduleFileExtensions": [
+      "ts",
+      "js",
+      "node"
+    ],
+    "transform": {
+      "^.+\\.ts$": "ts-jest"
+    },
+    "testMatch": [
+      "<rootDir>/test/**/*\\.ts"
+    ]
   }
 }
