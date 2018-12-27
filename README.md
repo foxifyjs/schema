@@ -3,14 +3,13 @@
 Object schema validation
 
 [![NPM Version](https://img.shields.io/npm/v/@foxify/schema.svg)](https://www.npmjs.com/package/@foxify/schema)
-[![Node Version](https://img.shields.io/node/v/@foxify/schema.svg)](https://nodejs.org)
 [![TypeScript Version](https://img.shields.io/npm/types/@foxify/schema.svg)](https://www.typescriptlang.org)
 [![Tested With Jest](https://img.shields.io/badge/tested_with-jest-99424f.svg)](https://github.com/facebook/jest)
 [![Pull Requests](https://img.shields.io/badge/PRs-Welcome-brightgreen.svg)](https://github.com/foxifyjs/schema/pulls)
 [![License](https://img.shields.io/github/license/foxifyjs/schema.svg)](https://github.com/foxifyjs/schema/blob/master/LICENSE)
 [![Build Status](https://api.travis-ci.com/foxifyjs/schema.svg?branch=master)](https://travis-ci.com/foxifyjs/schema)
 [![Coverage Status](https://codecov.io/gh/foxifyjs/schema/branch/master/graph/badge.svg)](https://codecov.io/gh/foxifyjs/schema)
-[![Package Quality](http://npm.packagequality.com/shield/%40foxify%2Fodin.svg)](http://packagequality.com/#?package=@foxify/schema)
+[![Package Quality](http://npm.packagequality.com/shield/%40foxify%2Fschema.svg)](http://packagequality.com/#?package=@foxify/schema)
 [![Dependencies Status](https://david-dm.org/foxifyjs/schema.svg)](https://david-dm.org/foxifyjs/schema)
 [![NPM Total Downloads](https://img.shields.io/npm/dt/@foxify/schema.svg)](https://www.npmjs.com/package/@foxify/schema)
 [![NPM Monthly Downloads](https://img.shields.io/npm/dm/@foxify/schema.svg)](https://www.npmjs.com/package/@foxify/schema)
