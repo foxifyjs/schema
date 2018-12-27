@@ -1,6 +1,6 @@
 # schema <!-- omit in toc -->
 
-TypeScript Object schema validation
+Object schema validation
 
 [![NPM Version](https://img.shields.io/npm/v/@foxify/schema.svg)](https://www.npmjs.com/package/@foxify/schema)
 [![Node Version](https://img.shields.io/node/v/@foxify/schema.svg)](https://nodejs.org)
