@@ -1,9 +1,9 @@
 import * as Schema from "../src";
 
 it("should have an error because of the required field", () => {
-  const schema = {
+  const schema = Schema.object.keys({
     foo: Schema.boolean.required,
-  };
+  });
 
   const value = {};
 

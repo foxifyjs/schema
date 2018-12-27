@@ -1,6 +1,6 @@
 {
   "name": "@foxify/schema",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "TypeScript schema validation",
   "author": "Ardalan Amini <ardalanamini22@gmail.com> [https://github.com/ardalanamini]",
   "license": "MIT",

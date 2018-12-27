@@ -10,10 +10,10 @@ namespace Schema { }
 
 const Schema = {
   validate: <P extends object = object>(
-    schema: object,
+    schema: object | ObjectType<P>,
     value: object,
   ): { errors: object | null, value: P } => {
-    schema = new ObjectType().keys(schema);
+    if (!(schema instanceof ObjectType)) schema = Schema.object.keys(schema);
 
     const result = (schema as any)._validate("", value);
 

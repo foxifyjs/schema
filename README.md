@@ -1,6 +1,6 @@
 # schema <!-- omit in toc -->
 
-Object schema validation
+TypeScript ready object schema validation
 
 [![NPM Version](https://img.shields.io/npm/v/@foxify/schema.svg)](https://www.npmjs.com/package/@foxify/schema)
 [![TypeScript Version](https://img.shields.io/npm/types/@foxify/schema.svg)](https://www.typescriptlang.org)
@@ -47,7 +47,7 @@ npm i -s @foxify/schema
 ```javascript
 const Schema = require("@foxify/schema");
 
-const validator = {
+const schema = {
   username: Schema.string.alphanum.required,
   name: {
     first: Schema.string.min(3).required,
@@ -56,11 +56,13 @@ const validator = {
   datetime: Schema.date.default(Date.now),
 };
 
-Schema.validate(validator, value);
+Schema.validate(schema, value);
 // returns -> { errors, value }
 // error -> null : you're good to go
 // error -> { [path: string]: string[] } : you have a problem
 ```
+
+> for more details see [the documents](https://schema.js.org)
 
 ## Versioning
 
