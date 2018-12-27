@@ -13,8 +13,9 @@
     "url": "https://github.com/foxifyjs/schema/issues"
   },
   "keywords": [
+    "foxify",
+    "javascript",
     "typescript",
-    "json",
     "schema",
     "validation"
   ],
