@@ -1,6 +1,6 @@
 {
   "name": "@foxify/schema",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "TypeScript schema validation",
   "author": "Ardalan Amini <ardalanamini22@gmail.com> [https://github.com/ardalanamini]",
   "license": "MIT",
@@ -32,19 +32,19 @@
     "coverage": "npm test -- --coverage",
     "codecov": "npm run coverage && codecov"
   },
-  "dependencies": {
-    "prototyped.js": "^0.21.0",
-    "verifications": "^0.3.0"
+  "peerDependencies": {
+    "prototyped.js": "^1.0.0"
   },
   "devDependencies": {
-    "@types/jest": "^23.3.10",
-    "@types/node": "^10.12.18",
-    "codecov": "^3.1.0",
-    "jest": "^23.6.0",
+    "@types/jest": "^24.0.4",
+    "@types/node": "^11.9.3",
+    "codecov": "^3.2.0",
+    "jest": "^24.1.0",
+    "prototyped.js": "^1.0.0",
     "ts-jest": "^23.10.5",
-    "tslint": "^5.12.0",
+    "tslint": "^5.12.1",
     "tslint-config-airbnb": "^5.11.1",
-    "typescript": "^3.2.2"
+    "typescript": "^3.3.3"
   },
   "jest": {
     "moduleFileExtensions": [

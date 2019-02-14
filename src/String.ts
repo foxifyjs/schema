@@ -1,13 +1,36 @@
 import * as assert from "assert";
 import { isNumber } from "prototyped.js/es6/number/methods";
 import { isString, truncate } from "prototyped.js/es6/string/methods";
-import { CreditCard } from "verifications";
 import AnyType from "./Any";
 
 // tslint:disable-next-line:max-line-length
 const ipv4Regex = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/;
 // tslint:disable-next-line:max-line-length
 const ipv6Regex = /(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))/;
+
+/**
+ * using Luhn Algorithm
+ */
+function verifyCreditCard(code: string): boolean {
+  code = code.replace(/\-/g, ""); // just in case
+
+  const luhnArr = [
+    [0, 2, 4, 6, 8, 1, 3, 5, 7, 9],
+    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  ];
+
+  const digits: number[] = code.split("") // spliting digits
+    .map((digit: string) => +digit); // parsing digits into number type
+
+  let sum: number = 0;
+
+  digits.map((digit: number, index: number) => {
+    // tslint:disable-next-line:no-bitwise
+    sum += luhnArr[(digits.length - index) & 1][digit];
+  });
+
+  return (sum % 10 === 0) && (sum > 0);
+}
 
 class StringType extends AnyType<string> {
   protected static type = "String";
@@ -54,7 +77,7 @@ class StringType extends AnyType<string> {
   }
 
   get creditCard() {
-    return this._test(value => !CreditCard.verify(value)
+    return this._test(value => !verifyCreditCard(value)
       ? "Must be a credit-card" : {});
   }
 
