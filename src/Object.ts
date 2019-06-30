@@ -1,16 +1,13 @@
 import assert from "assert";
-import { isNumber } from "prototyped.js/es6/number/methods";
-import {
-  isObject,
-  keys,
-  mapValues,
-  reduce,
-} from "prototyped.js/es6/object/methods";
-import { isEmpty } from "prototyped.js/es6/string/methods";
-import AnyType from "./Any";
+import Base from "./Any";
+import { number, object, string, TYPE } from "./utils";
 
-class ObjectType<T extends object = object> extends AnyType<T> {
-  protected static type = "Object";
+const { isNumber } = number;
+const { isObject, keys, mapValues, reduce } = object;
+const { isEmpty } = string;
+
+class Type<T extends object = object> extends Base<T> {
+  protected static type = TYPE.OBJECT;
 
   constructor(obj?: T) {
     super();
@@ -20,14 +17,14 @@ class ObjectType<T extends object = object> extends AnyType<T> {
     assert(isObject(obj), "Expected obj to be an object");
 
     obj = mapValues(obj, (value: any) => {
-      if (ObjectType.isType(value)) return value;
+      if (Base.isType(value)) return value;
 
       assert(
         isObject(value),
-        "Expected obj's values to be object or instance of AnyType",
+        "Expected obj's values to be object or an schema type",
       );
 
-      return new ObjectType(value);
+      return new Type(value);
     }) as any;
 
     return this._pipe((value, path) =>
@@ -92,4 +89,4 @@ class ObjectType<T extends object = object> extends AnyType<T> {
   }
 }
 
-export default ObjectType;
+export default Type;

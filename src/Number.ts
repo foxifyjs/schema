@@ -1,9 +1,11 @@
 import assert from "assert";
-import { isNumber } from "prototyped.js/es6/number/methods";
-import AnyType from "./Any";
+import Base from "./Any";
+import { number, TYPE } from "./utils";
 
-class NumberType extends AnyType<number> {
-  protected static type = "Number";
+const { isNumber } = number;
+
+class Type extends Base<number> {
+  protected static type = TYPE.NUMBER;
 
   public port() {
     return this._pipe(value => ({
@@ -81,4 +83,4 @@ class NumberType extends AnyType<number> {
   }
 }
 
-export default NumberType;
+export default Type;

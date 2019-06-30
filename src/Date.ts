@@ -1,12 +1,14 @@
 import assert from "assert";
-import { prepend } from "prototyped.js/es6/array/methods";
-import { isDate } from "prototyped.js/es6/date/methods";
-import { isNumber } from "prototyped.js/es6/number/methods";
-import { isString } from "prototyped.js/es6/string/methods";
-import AnyType from "./Any";
+import Base from "./Any";
+import { array, date, number, string, TYPE } from "./utils";
 
-class DateType extends AnyType<Date | number | string> {
-  protected static type = "Date";
+const { prepend } = array;
+const { isDate } = date;
+const { isNumber } = number;
+const { isString } = string;
+
+class Type extends Base<Date | number | string> {
+  protected static type = TYPE.DATE;
 
   public min(date: Date | number | string | (() => Date | number | string)) {
     if (isString(date) || isNumber(date)) date = new Date(date);
@@ -63,4 +65,4 @@ class DateType extends AnyType<Date | number | string> {
   }
 }
 
-export default DateType;
+export default Type;

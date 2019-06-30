@@ -1,8 +1,10 @@
-import { isBoolean } from "prototyped.js/es6/boolean/methods";
-import AnyType from "./Any";
+import Base from "./Any";
+import { boolean, TYPE } from "./utils";
 
-class BooleanType extends AnyType<boolean> {
-  protected static type = "Boolean";
+const { isBoolean } = boolean;
+
+class Type extends Base<boolean> {
+  protected static type = TYPE.BOOLEAN;
 
   protected _base(value: any) {
     if (isBoolean(value)) return null;
@@ -11,4 +13,4 @@ class BooleanType extends AnyType<boolean> {
   }
 }
 
-export default BooleanType;
+export default Type;

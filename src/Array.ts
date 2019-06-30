@@ -1,9 +1,11 @@
 import assert from "assert";
-import { isNumber } from "prototyped.js/es6/number/methods";
-import AnyType from "./Any";
+import Base from "./Any";
+import { number, TYPE } from "./utils";
 
-class ArrayType<T = any> extends AnyType<T[]> {
-  protected static type = "Array";
+const { isNumber } = number;
+
+class Type<T = any> extends Base<T[]> {
+  protected static type = TYPE.ARRAY;
 
   public min(num: number) {
     assert(isNumber(num), "'num' must be a number");
@@ -35,9 +37,9 @@ class ArrayType<T = any> extends AnyType<T[]> {
     }));
   }
 
-  public items(type: AnyType) {
+  public items(type: Base) {
     assert(
-      AnyType.isType(type),
+      Base.isType(type),
       `Expected 'type' to be a 'TypeAny' instance, got '${typeof type}' instead`,
     );
 
@@ -64,4 +66,4 @@ class ArrayType<T = any> extends AnyType<T[]> {
   }
 }
 
-export default ArrayType;
+export default Type;

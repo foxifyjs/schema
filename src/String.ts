@@ -1,7 +1,9 @@
 import assert from "assert";
-import { isNumber } from "prototyped.js/es6/number/methods";
-import { isString, truncate } from "prototyped.js/es6/string/methods";
-import AnyType from "./Any";
+import Base from "./Any";
+import { number, string, TYPE } from "./utils";
+
+const { isNumber } = number;
+const { isString, truncate } = string;
 
 // tslint:disable-next-line:max-line-length
 const ipv4Regex = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/;
@@ -33,8 +35,8 @@ function verifyCreditCard(code: string): boolean {
   return sum % 10 === 0 && sum > 0;
 }
 
-class StringType extends AnyType<string> {
-  protected static type = "String";
+class Type extends Base<string> {
+  protected static type = TYPE.STRING;
 
   /******************** TESTS ********************/
 
@@ -188,4 +190,4 @@ class StringType extends AnyType<string> {
   }
 }
 
-export default StringType;
+export default Type;

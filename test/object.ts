@@ -15,7 +15,7 @@ test("keys", () => {
     };
   } catch (error) {
     expect(error.message).toBe(
-      "Expected obj's values to be object or instance of AnyType",
+      "Expected obj's values to be object or an schema type",
     );
   }
 

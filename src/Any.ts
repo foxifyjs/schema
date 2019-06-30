@@ -1,31 +1,25 @@
 import assert from "assert";
-import { isFunction } from "prototyped.js/es6/function/methods";
-import { forEach } from "prototyped.js/es6/object/methods";
-import { isString } from "prototyped.js/es6/string/methods";
+import { func, object, string, TYPE } from "./utils";
 
-namespace AnyType {
+const { isFunction } = func;
+const { forEach } = object;
+const { isString } = string;
+
+namespace Type {
   export type PipelineItem<T> = (
     value: T,
     path: string,
   ) => { value: T; errors: string | { [key: string]: string } };
-
-  export type Caster<T> = (value: T) => T;
-
-  export type Tester<T> = (
-    value: T,
-    path: string,
-  ) => string | { [key: string]: string };
 }
 
-abstract class AnyType<T = any> {
-  public static isType = (value: any): value is AnyType =>
-    value instanceof AnyType;
+abstract class Type<T = any> {
+  public static isType = (value: any): value is Type => value instanceof Type;
 
-  protected static type = "Any";
+  protected static type: string = TYPE.ANY;
 
   protected _required = false;
 
-  protected _pipeline: Array<AnyType.PipelineItem<T>> = [];
+  protected _pipeline: Array<Type.PipelineItem<T>> = [];
 
   public default(value: T | (() => T)) {
     if (isFunction(value)) {
@@ -37,7 +31,7 @@ abstract class AnyType<T = any> {
     assert(
       !this._base(value),
       `The given value must be of "${
-        (this.constructor as typeof AnyType).type
+        (this.constructor as typeof Type).type
       }" type`,
     );
 
@@ -52,7 +46,7 @@ abstract class AnyType<T = any> {
     return this;
   }
 
-  protected _pipe(...items: Array<AnyType.PipelineItem<T>>) {
+  protected _pipe(...items: Array<Type.PipelineItem<T>>) {
     this._pipeline = this._pipeline.concat(items);
 
     return this;
@@ -115,4 +109,4 @@ abstract class AnyType<T = any> {
   protected abstract _base(value: any): string | null;
 }
 
-export default AnyType;
+export default Type;
