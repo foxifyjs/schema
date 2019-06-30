@@ -12,7 +12,7 @@ namespace Type {
   ) => { value: T; errors: string | { [key: string]: string } };
 
   export interface Options<T> {
-    def: () => T | null;
+    def: () => T | undefined;
     required: boolean;
   }
 }
@@ -23,7 +23,7 @@ abstract class Type<T = any> {
   protected static type: string = TYPE.ANY;
 
   protected _options: Type.Options<T> = {
-    def: () => null,
+    def: () => undefined,
     required: false,
   };
 
