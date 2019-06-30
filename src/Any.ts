@@ -10,6 +10,11 @@ namespace Type {
     value: T,
     path: string,
   ) => { value: T; errors: string | { [key: string]: string } };
+
+  export interface Options<T> {
+    def: () => T | null;
+    required: boolean;
+  }
 }
 
 abstract class Type<T = any> {
@@ -17,13 +22,16 @@ abstract class Type<T = any> {
 
   protected static type: string = TYPE.ANY;
 
-  protected _required = false;
+  protected _options: Type.Options<T> = {
+    def: () => null,
+    required: false,
+  };
 
   protected _pipeline: Array<Type.PipelineItem<T>> = [];
 
   public default(value: T | (() => T)) {
     if (isFunction(value)) {
-      this._default = value;
+      this._options.def = value;
 
       return this;
     }
@@ -35,13 +43,13 @@ abstract class Type<T = any> {
       }" type`,
     );
 
-    this._default = () => value;
+    this._options.def = () => value;
 
     return this;
   }
 
   public required(required = true) {
-    this._required = required;
+    this._options.required = required;
 
     return this;
   }
@@ -56,11 +64,13 @@ abstract class Type<T = any> {
     path: string,
     value: any,
   ): { value: T; errors: { [key: string]: string[] } } {
+    const { def, required } = this._options;
+
     if (value == null) {
-      value = this._default();
+      value = def();
 
       if (value == null) {
-        if (this._required) {
+        if (required) {
           return { value, errors: { [path]: ["Must be provided"] } };
         }
 
@@ -103,8 +113,6 @@ abstract class Type<T = any> {
       value,
     };
   }
-
-  protected _default: () => T | undefined = () => undefined;
 
   protected abstract _base(value: any): string | null;
 }
