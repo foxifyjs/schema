@@ -1,47 +1,74 @@
-import * as assert from "assert";
+import assert from "assert";
 import { isFunction } from "prototyped.js/es6/function/methods";
 import { forEach } from "prototyped.js/es6/object/methods";
 import { isString } from "prototyped.js/es6/string/methods";
 
 namespace AnyType {
+  export type PipelineItem<T> = (
+    value: T,
+    path: string,
+  ) => { value: T; errors: string | { [key: string]: string } };
+
   export type Caster<T> = (value: T) => T;
 
-  export type Tester<T> = (value: T, path: string) => string | { [key: string]: string };
+  export type Tester<T> = (
+    value: T,
+    path: string,
+  ) => string | { [key: string]: string };
 }
 
 abstract class AnyType<T = any> {
-  protected static type = "Any";
+  public static isType = (value: any): value is AnyType =>
+    value instanceof AnyType;
 
-  public static isType = (value: any): value is AnyType => value instanceof AnyType;
+  protected static type = "Any";
 
   protected _required = false;
 
-  protected _casters: Array<AnyType.Caster<T>> = [];
+  protected _pipeline: Array<AnyType.PipelineItem<T>> = [];
 
-  protected _testers: Array<AnyType.Tester<T>> = [];
+  public default(value: T | (() => T)) {
+    if (isFunction(value)) {
+      this._default = value;
 
-  protected _default: () => T | undefined = () => undefined;
+      return this;
+    }
 
-  protected abstract _base(value: any): string | null;
+    assert(
+      !this._base(value),
+      `The given value must be of "${
+        (this.constructor as typeof AnyType).type
+      }" type`,
+    );
 
-  protected _cast(caster: AnyType.Caster<T>) {
-    this._casters.push(caster);
+    this._default = () => value;
 
     return this;
   }
 
-  protected _test(tester: AnyType.Tester<T>) {
-    this._testers.push(tester);
+  public required(required = true) {
+    this._required = required;
 
     return this;
   }
 
-  protected _validate(path: string, value: any): { value: T, errors: { [key: string]: string[] } } {
-    if (value === undefined || value === null) {
+  protected _pipe(...items: Array<AnyType.PipelineItem<T>>) {
+    this._pipeline = this._pipeline.concat(items);
+
+    return this;
+  }
+
+  protected _validate(
+    path: string,
+    value: any,
+  ): { value: T; errors: { [key: string]: string[] } } {
+    if (value == null) {
       value = this._default();
 
-      if (value === undefined || value === null) {
-        if (this._required) return { value, errors: { [path]: ["Must be provided"] } };
+      if (value == null) {
+        if (this._required) {
+          return { value, errors: { [path]: ["Must be provided"] } };
+        }
 
         return { value, errors: {} };
       }
@@ -50,15 +77,17 @@ abstract class AnyType<T = any> {
     const baseError = this._base(value);
     if (baseError) return { value, errors: { [path]: [baseError] } };
 
-    this._casters.forEach(caster => value = caster(value));
-
-    const errors = this._testers.reduce(
+    const errors = this._pipeline.reduce(
       (prev, tester) => {
-        let result = tester(value, path);
+        const result = tester(value, path);
 
-        if (isString(result)) result = { [path]: result };
+        value = result.value;
 
-        forEach(result, (err, key) => {
+        let errs = result.errors;
+
+        if (isString(errs)) errs = { [path]: errs };
+
+        forEach(errs, (err: any, key) => {
           if (!Array.isArray(err)) err = [err];
 
           if (prev[key]) {
@@ -81,28 +110,9 @@ abstract class AnyType<T = any> {
     };
   }
 
-  public get required() {
-    this._required = true;
+  protected _default: () => T | undefined = () => undefined;
 
-    return this;
-  }
-
-  public default(value: T | (() => T)) {
-    if (isFunction(value)) {
-      this._default = value;
-
-      return this;
-    }
-
-    assert(
-      !this._base(value),
-      `The given value must be of "${(this.constructor as typeof AnyType).type}" type`,
-    );
-
-    this._default = () => value;
-
-    return this;
-  }
+  protected abstract _base(value: any): string | null;
 }
 
 export default AnyType;

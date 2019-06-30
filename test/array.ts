@@ -2,8 +2,8 @@ import * as Schema from "../src";
 
 test("min", () => {
   const schema = {
-    bar: Schema.array.min(2),
-    foo: Schema.array.min(1),
+    bar: Schema.array().min(2),
+    foo: Schema.array().min(1),
   };
 
   const value = {
@@ -19,8 +19,8 @@ test("min", () => {
 
 test("max", () => {
   const schema = {
-    bar: Schema.array.max(2),
-    foo: Schema.array.max(1),
+    bar: Schema.array().max(2),
+    foo: Schema.array().max(1),
   };
 
   const value = {
@@ -36,8 +36,8 @@ test("max", () => {
 
 test("length", () => {
   const schema = {
-    bar: Schema.array.length(3),
-    foo: Schema.array.length(1),
+    bar: Schema.array().length(3),
+    foo: Schema.array().length(1),
   };
 
   const value = {
@@ -53,8 +53,8 @@ test("length", () => {
 
 test("of", () => {
   const schema = {
-    bar: Schema.array.of(Schema.string),
-    foo: Schema.array.of(Schema.number),
+    bar: Schema.array().items(Schema.string()),
+    foo: Schema.array().items(Schema.number()),
   };
 
   const value = {
@@ -70,9 +70,9 @@ test("of", () => {
 
 test("complex", () => {
   const schema = {
-    array1: Schema.array,
-    bar: Schema.array.min(1).max(3).default([1, 2]),
-    foo: Schema.array.length(1),
+    array1: Schema.array(),
+    bar: Schema.array().min(1).max(3).default([1, 2]),
+    foo: Schema.array().length(1),
   };
 
   const value = {

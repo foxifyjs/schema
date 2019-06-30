@@ -1,52 +1,83 @@
-import * as assert from "assert";
+import assert from "assert";
 import { isNumber } from "prototyped.js/es6/number/methods";
 import AnyType from "./Any";
 
 class NumberType extends AnyType<number> {
   protected static type = "Number";
 
-  protected _base(value: any) {
-    if (isNumber(value)) return null;
-
-    return "Must be a number";
+  public port() {
+    return this._pipe(value => ({
+      value,
+      errors:
+        value < 0 || value > 65535 ? `Must be a valid port (0 - 65535)` : {},
+    }));
   }
 
-  get integer() {
-    return this._test(value => !Number.isInteger(value) ? `Must be an integer` : {});
+  public integer() {
+    return this._pipe(value => ({
+      value,
+      errors: !Number.isInteger(value) ? `Must be an integer` : {},
+    }));
   }
 
-  get positive() {
-    return this._test(value => value < 0 ? `Must be a positive number` : {});
+  public positive() {
+    return this._pipe(value => ({
+      value,
+      errors: value < 0 ? `Must be a positive number` : {},
+    }));
   }
 
-  get negative() {
-    return this._test(value => value > 0 ? `Must be a negative number` : {});
+  public negative() {
+    return this._pipe(value => ({
+      value,
+      errors: value > 0 ? `Must be a negative number` : {},
+    }));
   }
 
   public min(num: number) {
     assert(isNumber(num), "'num' must be a number");
 
-    return this._test(value => value < num ? `Must be at least ${num}` : {});
+    return this._pipe(value => ({
+      value,
+      errors: value < num ? `Must be at least ${num}` : {},
+    }));
   }
 
   public max(num: number) {
     assert(isNumber(num), "'num' must be a number");
 
-    return this._test(value => value > num ? `Must be at most ${num}` : {});
+    return this._pipe(value => ({
+      value,
+      errors: value > num ? `Must be at most ${num}` : {},
+    }));
   }
 
   public precision(num: number) {
     assert(isNumber(num), "'num' must be a number");
 
-    return this._test(value => (`${value}`.split(".")[1] || "").length > num ?
-      `Must be have at most ${num} decimal places` : {});
+    return this._pipe(value => ({
+      value,
+      errors:
+        (`${value}`.split(".")[1] || "").length > num
+          ? `Must be have at most ${num} decimal places`
+          : {},
+    }));
   }
 
   public multipliedBy(num: number) {
     assert(isNumber(num), "'num' must be a number");
     assert(num >= 0, "'num' must be a positive number");
 
-    return this._test(value => value % num !== 0 ? `Must be a multiple of ${num}` : {});
+    return this._pipe(value => ({
+      value,
+      errors: value % num !== 0 ? `Must be a multiple of ${num}` : {},
+    }));
+  }
+
+  protected _base(value: any) {
+    if (isNumber(value)) return null;
+
+    return "Must be a number";
   }
 }
 

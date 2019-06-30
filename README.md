@@ -21,14 +21,14 @@ TypeScript ready object schema validation
 
 ## Table of Content <!-- omit in toc -->
 
-- [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
-  - [Usage](#usage)
-- [Versioning](#versioning)
-- [Authors](#authors)
-- [License](#license)
-- [Support](#support)
+- [Getting Started](#Getting-Started)
+  - [Prerequisites](#Prerequisites)
+  - [Installation](#Installation)
+  - [Usage](#Usage)
+- [Versioning](#Versioning)
+- [Authors](#Authors)
+- [License](#License)
+- [Support](#Support)
 
 ## Getting Started
 
@@ -48,12 +48,12 @@ npm i -s @foxify/schema
 const Schema = require("@foxify/schema");
 
 const schema = {
-  username: Schema.string.alphanum.required,
+  username: Schema.string().alphanum().required(),
   name: {
-    first: Schema.string.min(3).required,
-    last: Schema.string.min(3),
+    first: Schema.string().min(3).required(),
+    last: Schema.string().min(3),
   },
-  datetime: Schema.date.default(Date.now),
+  datetime: Schema.date().default(Date.now),
 };
 
 Schema.validate(schema, value);
@@ -70,7 +70,7 @@ We use [SemVer](http://semver.org) for versioning. For the versions available, s
 
 ## Authors
 
-- **Ardalan Amini** - *Owner/Developer* - [@ardalanamini](https://github.com/ardalanamini)
+- **Ardalan Amini** - *Core Maintainer* - [@ardalanamini](https://github.com/ardalanamini)
 
 See also the list of [contributors](https://github.com/foxifyjs/schema/contributors) who participated in this project.
 

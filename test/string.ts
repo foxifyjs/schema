@@ -2,8 +2,8 @@ import * as Schema from "../src";
 
 test("token", () => {
   const schema = {
-    bar: Schema.string.token,
-    foo: Schema.string.token,
+    bar: Schema.string().token(),
+    foo: Schema.string().token(),
   };
 
   const value = {
@@ -19,8 +19,8 @@ test("token", () => {
 
 test("alphanum", () => {
   const schema = {
-    bar: Schema.string.alphanum,
-    foo: Schema.string.alphanum,
+    bar: Schema.string().alphanum(),
+    foo: Schema.string().alphanum(),
   };
 
   const value = {
@@ -36,8 +36,8 @@ test("alphanum", () => {
 
 test("numeral", () => {
   const schema = {
-    bar: Schema.string.numeral,
-    foo: Schema.string.numeral,
+    bar: Schema.string().numeral(),
+    foo: Schema.string().numeral(),
   };
 
   const value = {
@@ -53,9 +53,9 @@ test("numeral", () => {
 
 test("ip", () => {
   const schema = {
-    foo: Schema.string.ip,
-    googleIpv4: Schema.string.ip,
-    googleIpv6: Schema.string.ip,
+    foo: Schema.string().ip(),
+    googleIpv4: Schema.string().ip(),
+    googleIpv6: Schema.string().ip(),
   };
 
   const value = {
@@ -76,8 +76,8 @@ test("ip", () => {
 
 test("ipv4", () => {
   const schema = {
-    foo: Schema.string.ipv4,
-    google: Schema.string.ipv4,
+    foo: Schema.string().ipv4(),
+    google: Schema.string().ipv4(),
   };
 
   const value = {
@@ -96,8 +96,8 @@ test("ipv4", () => {
 
 test("ipv6", () => {
   const schema = {
-    foo: Schema.string.ipv6,
-    google: Schema.string.ipv6,
+    foo: Schema.string().ipv6(),
+    google: Schema.string().ipv6(),
   };
 
   const value = {
@@ -116,8 +116,8 @@ test("ipv6", () => {
 
 test("email", () => {
   const schema = {
-    bar: Schema.string.email,
-    foo: Schema.string.email,
+    bar: Schema.string().email(),
+    foo: Schema.string().email(),
   };
 
   const value = {
@@ -136,8 +136,8 @@ test("email", () => {
 
 test("creditCard", () => {
   const schema = {
-    bar: Schema.string.creditCard,
-    foo: Schema.string.creditCard,
+    bar: Schema.string().creditCard(),
+    foo: Schema.string().creditCard(),
   };
 
   const value = {
@@ -156,8 +156,8 @@ test("creditCard", () => {
 
 test("min", () => {
   const schema = {
-    bar: Schema.string.min(3),
-    foo: Schema.string.min(5),
+    bar: Schema.string().min(3),
+    foo: Schema.string().min(5),
   };
 
   const value = {
@@ -173,8 +173,8 @@ test("min", () => {
 
 test("max", () => {
   const schema = {
-    bar: Schema.string.max(3),
-    foo: Schema.string.max(5),
+    bar: Schema.string().max(3),
+    foo: Schema.string().max(5),
   };
 
   const value = {
@@ -190,8 +190,8 @@ test("max", () => {
 
 test("length", () => {
   const schema = {
-    bar: Schema.string.length(3),
-    foo: Schema.string.length(5),
+    bar: Schema.string().length(3),
+    foo: Schema.string().length(5),
   };
 
   const value = {
@@ -207,8 +207,8 @@ test("length", () => {
 
 test("regex", () => {
   const schema = {
-    bar: Schema.string.regex(/.*/),
-    foo: Schema.string.regex(/\d/),
+    bar: Schema.string().regex(/.*/),
+    foo: Schema.string().regex(/\d/),
   };
 
   const value = {
@@ -224,8 +224,8 @@ test("regex", () => {
 
 test("enum", () => {
   const schema = {
-    bar: Schema.string.enum(["john", "doe"]),
-    foo: Schema.string.enum(["john", "doe"]),
+    bar: Schema.string().enum(["john", "doe"]),
+    foo: Schema.string().enum(["john", "doe"]),
   };
 
   const value = {
@@ -241,8 +241,8 @@ test("enum", () => {
 
 test("truncate", () => {
   const schema = {
-    bar: Schema.string.truncate(7),
-    foo: Schema.string.truncate(7),
+    bar: Schema.string().truncate(7),
+    foo: Schema.string().truncate(7),
   };
 
   const value = {
@@ -258,8 +258,8 @@ test("truncate", () => {
 
 test("replace", () => {
   const schema = {
-    bar: Schema.string.replace("john", "hello"),
-    foo: Schema.string.replace(/something else/, "world"),
+    bar: Schema.string().replace("john", "hello"),
+    foo: Schema.string().replace(/something else/, "world"),
   };
 
   const value = {

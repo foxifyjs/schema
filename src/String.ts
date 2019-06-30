@@ -1,4 +1,4 @@
-import * as assert from "assert";
+import assert from "assert";
 import { isNumber } from "prototyped.js/es6/number/methods";
 import { isString, truncate } from "prototyped.js/es6/string/methods";
 import AnyType from "./Any";
@@ -19,7 +19,8 @@ function verifyCreditCard(code: string): boolean {
     [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
   ];
 
-  const digits: number[] = code.split("") // spliting digits
+  const digits: number[] = code
+    .split("") // spliting digits
     .map((digit: string) => +digit); // parsing digits into number type
 
   let sum: number = 0;
@@ -29,91 +30,128 @@ function verifyCreditCard(code: string): boolean {
     sum += luhnArr[(digits.length - index) & 1][digit];
   });
 
-  return (sum % 10 === 0) && (sum > 0);
+  return sum % 10 === 0 && sum > 0;
 }
 
 class StringType extends AnyType<string> {
   protected static type = "String";
 
-  protected _base(value: any) {
-    if (isString(value)) return null;
-
-    return "Must be an string";
-  }
-
   /******************** TESTS ********************/
 
-  get token() {
-    return this._test(value => !/^[a-zA-Z0-9_]*$/.test(value) ?
-      `Must only contain a-z, A-Z, 0-9, and underscore (_)` : {});
+  public token() {
+    return this._pipe(value => ({
+      value,
+      errors: !/^[a-zA-Z0-9_]*$/.test(value)
+        ? `Must only contain a-z, A-Z, 0-9, and underscore (_)`
+        : {},
+    }));
   }
 
-  get alphanum() {
-    return this._test(value => !/^[a-zA-Z0-9]*$/.test(value) ?
-      `Must only contain a-z, A-Z, 0-9` : {});
+  public alphanum() {
+    return this._pipe(value => ({
+      value,
+      errors: !/^[a-zA-Z0-9]*$/.test(value)
+        ? `Must only contain a-z, A-Z, 0-9`
+        : {},
+    }));
   }
 
-  get numeral() {
-    return this._test(value => !/^[0-9]*$/.test(value)
-      ? `Must only contain numbers` : {});
+  public numeral() {
+    return this._pipe(value => ({
+      value,
+      errors: !/^[0-9]*$/.test(value) ? `Must only contain numbers` : {},
+    }));
   }
 
-  get ip() {
-    return this._test(value => !(ipv4Regex.test(value) || ipv6Regex.test(value)) ?
-      `Must be an ipv4 or ipv6` : {});
+  public ip() {
+    return this._pipe(value => ({
+      value,
+      errors: !(ipv4Regex.test(value) || ipv6Regex.test(value))
+        ? `Must be an ipv4 or ipv6`
+        : {},
+    }));
   }
 
-  get ipv4() {
-    return this._test(value => !ipv4Regex.test(value) ? `Must be an ipv4` : {});
+  public ipv4() {
+    return this._pipe(value => ({
+      value,
+      errors: !ipv4Regex.test(value) ? `Must be an ipv4` : {},
+    }));
   }
 
-  get ipv6() {
-    return this._test(value => !ipv6Regex.test(value) ? `Must be an ipv6` : {});
+  public ipv6() {
+    return this._pipe(value => ({
+      value,
+      errors: !ipv6Regex.test(value) ? `Must be an ipv6` : {},
+    }));
   }
 
-  get email() {
-    return this._test(value => !/^\w[\w\.]+@\w+?\.[a-zA-Z]{2,3}$/.test(value)
-      ? "Must be an email address" : {});
+  public email() {
+    return this._pipe(value => ({
+      value,
+      errors: !/^\w[\w\.]+@\w+?\.[a-zA-Z]{2,3}$/.test(value)
+        ? "Must be an email address"
+        : {},
+    }));
   }
 
-  get creditCard() {
-    return this._test(value => !verifyCreditCard(value)
-      ? "Must be a credit-card" : {});
+  public creditCard() {
+    return this._pipe(value => ({
+      value,
+      errors: !verifyCreditCard(value) ? "Must be a credit-card" : {},
+    }));
   }
 
   public min(num: number) {
     assert(isNumber(num), "'num' must be a number");
     assert(num >= 0, "'num' must be a positive number");
 
-    return this._test(value => value.length < num ? `Must be at least ${num} characters` : {});
+    return this._pipe(value => ({
+      value,
+      errors: value.length < num ? `Must be at least ${num} characters` : {},
+    }));
   }
 
   public max(num: number) {
     assert(isNumber(num), "'num' must be a number");
     assert(num >= 0, "'num' must be a positive number");
 
-    return this._test(value => value.length > num ? `Must be at most ${num} characters` : {});
+    return this._pipe(value => ({
+      value,
+      errors: value.length > num ? `Must be at most ${num} characters` : {},
+    }));
   }
 
   public length(num: number) {
     assert(isNumber(num), "'num' must be a number");
     assert(num >= 0, "'num' must be a positive number");
 
-    return this._test(value => value.length !== num ? `Must be exactly ${num} characters` : {});
+    return this._pipe(value => ({
+      value,
+      errors: value.length !== num ? `Must be exactly ${num} characters` : {},
+    }));
   }
 
   public regex(regex: RegExp) {
     assert(regex instanceof RegExp, "'regex' must be a regex");
 
-    return this._test(value => !regex.test(value) ? `Must match ${regex}` : {});
+    return this._pipe(value => ({
+      value,
+      errors: !regex.test(value) ? `Must match ${regex}` : {},
+    }));
   }
 
   public enum(enums: string[]) {
-    enums.forEach(str => assert(isString(str), "'enums' must be an string array"));
+    enums.forEach(str =>
+      assert(isString(str), "'enums' must be an string array"),
+    );
 
     const TYPE = JSON.stringify(enums);
 
-    return this._test(value => !enums.includes(value) ? `Must be one of ${TYPE}` : {});
+    return this._pipe(value => ({
+      value,
+      errors: !enums.includes(value) ? `Must be one of ${TYPE}` : {},
+    }));
   }
 
   /******************** CASTS ********************/
@@ -122,14 +160,31 @@ class StringType extends AnyType<string> {
     assert(isNumber(length), "'length' must be a number");
     assert(length >= 0, "'length' must be a positive number");
 
-    return this._cast(value => truncate(value, length, truncateString));
+    return this._pipe(value => ({
+      value: truncate(value, length, truncateString),
+      errors: {},
+    }));
   }
 
   public replace(pattern: string | RegExp, replacement: string) {
-    assert(isString(pattern) || (pattern instanceof RegExp), "'pattern' must be string or regex");
+    assert(
+      isString(pattern) || pattern instanceof RegExp,
+      "'pattern' must be string or regex",
+    );
     assert(isString(replacement), "'replacement' must be an string");
 
-    return this._cast(value => value.replace(pattern, replacement));
+    return this._pipe(value => ({
+      value: value.replace(pattern, replacement),
+      errors: {},
+    }));
+  }
+
+  /******************** BASE ********************/
+
+  protected _base(value: any) {
+    if (isString(value)) return null;
+
+    return "Must be an string";
   }
 }
 

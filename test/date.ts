@@ -4,11 +4,26 @@ function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+it("should fail to cast boolean to date", () => {
+  const schema = {
+    foo: Schema.date(),
+  };
+
+  const value = {
+    foo: true,
+  };
+
+  const result = Schema.validate(schema, value);
+
+  expect(result.errors).toEqual({ foo: ["Must be a valid date"] });
+  expect(result.value).toEqual({ foo: true });
+});
+
 it("should convert default value (number) to date", () => {
   const now = Date.now();
 
   const schema = {
-    foo: Schema.date.default(now),
+    foo: Schema.date().default(now),
   };
 
   const value = {};
@@ -23,7 +38,7 @@ it("should convert default value (string) to date", () => {
   const date = "2018-12-26";
 
   const schema = {
-    foo: Schema.date.default(date),
+    foo: Schema.date().default(date),
   };
 
   const value = {};
@@ -38,7 +53,7 @@ it("should convert default value returning number to date", () => {
   let now;
 
   const schema = {
-    foo: Schema.date.default(() => {
+    foo: Schema.date().default(() => {
       now = Date.now();
 
       return now;
@@ -57,7 +72,7 @@ it("should convert default value returning string to date", () => {
   const date = "2018-12-26";
 
   const schema = {
-    foo: Schema.date.default(() => date),
+    foo: Schema.date().default(() => date),
   };
 
   const value = {};
@@ -72,7 +87,7 @@ it("should convert number to date", () => {
   const now = Date.now();
 
   const schema = {
-    foo: Schema.date,
+    foo: Schema.date(),
   };
 
   const value = {
@@ -87,7 +102,7 @@ it("should convert number to date", () => {
 
 it("should convert string to date", () => {
   const schema = {
-    foo: Schema.date,
+    foo: Schema.date(),
   };
 
   const date = "2018-12-26";
@@ -110,8 +125,10 @@ test("min", async () => {
   await sleep(1000);
 
   const schema = {
-    bar: Schema.date.default(now).min("2018-01-01"),
-    foo: Schema.date.min(Date.now),
+    bar: Schema.date()
+      .default(now)
+      .min("2018-01-01"),
+    foo: Schema.date().min(Date.now),
   };
 
   const value = {
@@ -133,8 +150,10 @@ test("max", async () => {
   const date = "2018-01-01";
 
   const schema = {
-    bar: Schema.date.default(date).max(Date.now),
-    foo: Schema.date.max(Date.now()),
+    bar: Schema.date()
+      .default(date)
+      .max(Date.now),
+    foo: Schema.date().max(Date.now()),
   };
 
   await sleep(1000);
@@ -162,8 +181,10 @@ test("complex", async () => {
   await sleep(1000);
 
   const schema = {
-    bar: Schema.date,
-    foo: Schema.date.min(Date.now()).max("2018-01-01"),
+    bar: Schema.date(),
+    foo: Schema.date()
+      .min(Date.now())
+      .max("2018-01-01"),
   };
 
   const value = {

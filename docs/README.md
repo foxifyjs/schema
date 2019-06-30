@@ -4,46 +4,49 @@ TypeScript ready object schema validation
 
 ## Table of Content <!-- omit in toc -->
 
-- [Schema Definition](#schema-definition)
-  - [Basics](#basics)
-    - [`.required`](#required)
+- [Schema Definition](#Schema-Definition)
+  - [Basics](#Basics)
+    - [`.required(required?: boolean)`](#requiredrequired-boolean)
     - [`.default(value: any)`](#defaultvalue-any)
-  - [Array](#array)
+  - [Array](#Array)
     - [`.min(min: number)`](#minmin-number)
     - [`.max(max: number)`](#maxmax-number)
     - [`.length(length: number)`](#lengthlength-number)
-    - [`.of(type: Schema Type)`](#oftype-schema-type)
-  - [Boolean](#boolean)
-  - [Date](#date)
-    - [`.min(date: Date)`](#mindate-date)
+    - [`.items(type: Schema Type)`](#itemstype-Schema-Type)
+  - [Boolean](#Boolean)
+  - [Date](#Date)
+    - [`.min(date: Date)`](#mindate-Date)
     - [`.max(date: number)`](#maxdate-number)
-  - [Number](#number)
-    - [`.integer`](#integer)
-    - [`.positive`](#positive)
-    - [`.negative`](#negative)
+  - [Number](#Number)
+    - [`.integer()`](#integer)
+    - [`.positive()`](#positive)
+    - [`.negative()`](#negative)
     - [`.min(num: number)`](#minnum-number)
     - [`.max(num: number)`](#maxnum-number)
     - [`.precision(precision: number)`](#precisionprecision-number)
-    - [`.multipliedBy(num: number)`](#multipliedbynum-number)
-  - [Object](#object)
-    - [`.keys(keys: object)`](#keyskeys-object)
-  - [String](#string)
-    - [`.token`](#token)
-    - [`.alphanum`](#alphanum)
-    - [`.numeral`](#numeral)
-    - [`.ip`](#ip)
-    - [`.ipv4`](#ipv4)
-    - [`.ipv6`](#ipv6)
-    - [`.email`](#email)
-    - [`.creditCard`](#creditcard)
+    - [`.multipliedBy(num: number)`](#multipliedBynum-number)
+  - [Object](#Object)
+    - [`object(obj: object)`](#objectobj-object)
+    - [`min(n: number)`](#minn-number)
+    - [`max(n: number)`](#maxn-number)
+    - [`length(n: number)`](#lengthn-number)
+  - [String](#String)
+    - [`.token()`](#token)
+    - [`.alphanum()`](#alphanum)
+    - [`.numeral()`](#numeral)
+    - [`.ip()`](#ip)
+    - [`.ipv4()`](#ipv4)
+    - [`.ipv6()`](#ipv6)
+    - [`.email()`](#email)
+    - [`.creditCard()`](#creditCard)
     - [`.min(length: number)`](#minlength-number)
     - [`.max(length: number)`](#maxlength-number)
     - [`.length(num: number)`](#lengthnum-number)
-    - [`.regex(regex: RegExp)`](#regexregex-regexp)
+    - [`.regex(regex: RegExp)`](#regexregex-RegExp)
     - [`.enum(enum: string[])`](#enumenum-string)
-    - [`.truncate(length: number, truncateString: string = ".")`](#truncatelength-number-truncatestring-string--%22%22)
-    - [`.replace(pattern: string | RegExp, replacement: string)`](#replacepattern-string--regexp-replacement-string)
-- [Validation](#validation)
+    - [`.truncate(length: number, truncateString: string = ".")`](#truncatelength-number-truncateString-string--%22%22)
+    - [`.replace(pattern: string | RegExp, replacement: string)`](#replacepattern-string--RegExp-replacement-string)
+- [Validation](#Validation)
 
 ### Schema Definition
 
@@ -55,13 +58,13 @@ Define the schema to validate the desired value.
 import * as Schema from "@foxify/schema";
 ```
 
-##### `.required`
+##### `.required(required?: boolean)`
 
 Insures that the given value exists.
 
 ```typescript
 const schema = {
-  foo: Schema.boolean.required,
+  foo: Schema.boolean().required(),
 };
 ```
 
@@ -73,7 +76,7 @@ If the value doesn't exist, it will become the value.
 
 ```typescript
 const schema = {
-  foo: Schema.boolean.default(false),
+  foo: Schema.boolean().default(false),
 };
 ```
 
@@ -83,7 +86,7 @@ Insures that the given value is an array
 
 ```typescript
 const schema = {
-  foo: Schema.array,
+  foo: Schema.array(),
 };
 ```
 
@@ -93,7 +96,7 @@ Insures that the given array contains at least `min` items
 
 ```typescript
 const schema = {
-  foo: Schema.array.min(2),
+  foo: Schema.array().min(2),
 };
 ```
 
@@ -103,7 +106,7 @@ Insures that the given array contains at most `max` items
 
 ```typescript
 const schema = {
-  foo: Schema.array.max(2),
+  foo: Schema.array().max(2),
 };
 ```
 
@@ -113,17 +116,17 @@ Insures that the given array contains exactly `length` items
 
 ```typescript
 const schema = {
-  foo: Schema.array.length(2),
+  foo: Schema.array().length(2),
 };
 ```
 
-##### `.of(type: Schema Type)`
+##### `.items(type: Schema Type)`
 
-Insures that the given array contains values of type "`type`"
+Insures that the given array contains only values of type "`type`"
 
 ```typescript
 const schema = {
-  foo: Schema.array.of(Schema.boolean),
+  foo: Schema.array().items(Schema.boolean),
 };
 ```
 
@@ -135,7 +138,7 @@ Insures that the given value is a boolean
 
 ```typescript
 const schema = {
-  foo: Schema.boolean,
+  foo: Schema.boolean(),
 };
 ```
 
@@ -147,7 +150,7 @@ Insures that the given value is a date
 
 ```typescript
 const schema = {
-  foo: Schema.date,
+  foo: Schema.date(),
 };
 ```
 
@@ -157,9 +160,9 @@ Insures that the given date is equal or after `date`
 
 ```typescript
 const schema = {
-  foo: Schema.date.min(Date.now),
-  // foo: Schema.date.min(new Date()),
-  // foo: Schema.date.min("2018-01-01 12:00:00"),
+  foo: Schema.date().min(Date.now),
+  bar: Schema.date().min(new Date()),
+  baz: Schema.date().min("2018-01-01 12:00:00"),
 };
 ```
 
@@ -169,9 +172,9 @@ Insures that the given date is equal or before `date`
 
 ```typescript
 const schema = {
-  foo: Schema.date.max(Date.now),
-  // foo: Schema.date.max(new Date()),
-  // foo: Schema.date.max("2018-01-01 12:00:00"),
+  foo: Schema.date().max(Date.now),
+  bar: Schema.date().max(new Date()),
+  baz: Schema.date().max("2018-01-01 12:00:00"),
 };
 ```
 
@@ -181,37 +184,37 @@ Insures that the given value is a number
 
 ```typescript
 const schema = {
-  foo: Schema.number,
+  foo: Schema.number(),
 };
 ```
 
-##### `.integer`
+##### `.integer()`
 
 Insures that the given number is an integer
 
 ```typescript
 const schema = {
-  foo: Schema.number.integer,
+  foo: Schema.number.integer(),
 };
 ```
 
-##### `.positive`
+##### `.positive()`
 
 Insures that the given number is a positive number
 
 ```typescript
 const schema = {
-  foo: Schema.number.positive,
+  foo: Schema.number().positive(),
 };
 ```
 
-##### `.negative`
+##### `.negative()`
 
 Insures that the given number is a negative number
 
 ```typescript
 const schema = {
-  foo: Schema.number.negative,
+  foo: Schema.number().negative(),
 };
 ```
 
@@ -221,7 +224,7 @@ Insures that the given number is `>= num`
 
 ```typescript
 const schema = {
-  foo: Schema.number.min(22),
+  foo: Schema.number().min(22),
 };
 ```
 
@@ -231,7 +234,7 @@ Insures that the given number is `<= num`
 
 ```typescript
 const schema = {
-  foo: Schema.number.max(22),
+  foo: Schema.number().max(22),
 };
 ```
 
@@ -241,7 +244,7 @@ Insures that the given number has at most `precision` decimal places
 
 ```typescript
 const schema = {
-  foo: Schema.number.precision(3),
+  foo: Schema.number().precision(3),
 };
 ```
 
@@ -251,7 +254,7 @@ Insures that the given number is a multiple of `num`
 
 ```typescript
 const schema = {
-  foo: Schema.number.multipliedBy(3),
+  foo: Schema.number().multipliedBy(3),
 };
 ```
 
@@ -261,19 +264,51 @@ Insures that the given value is an object
 
 ```typescript
 const schema = {
-  foo: Schema.object,
+  foo: Schema.object(),
 };
 ```
 
-##### `.keys(keys: object)`
+##### `object(obj: object)`
 
 Insures that the given object matches the given `keys` which is another schema
 
 ```typescript
 const schema = {
-  foo: Schema.object.keys({
-    bar: Schema.boolean.required,
-  }).default({ bar: false }).required,
+  foo: Schema.object({
+    bar: Schema.boolean().required(),
+  })
+    .default({ bar: false })
+    .required(),
+};
+```
+
+##### `min(n: number)`
+
+Insures that the given object has at least `n` key(s)
+
+```typescript
+const schema = {
+  foo: Schema.object().min(2),
+};
+```
+
+##### `max(n: number)`
+
+Insures that the given object has at most `n` key(s)
+
+```typescript
+const schema = {
+  foo: Schema.object().max(2),
+};
+```
+
+##### `length(n: number)`
+
+Insures that the given object has exactly `n` key(s)
+
+```typescript
+const schema = {
+  foo: Schema.object().length(2),
 };
 ```
 
@@ -283,87 +318,87 @@ Insures that the given value is an string
 
 ```typescript
 const schema = {
-  foo: Schema.string,
+  foo: Schema.string(),
 };
 ```
 
-##### `.token`
+##### `.token()`
 
-Insures that the given string only contains a-z, A-Z, 0-9, and underscore (_)
+Insures that the given string only contains a-z, A-Z, 0-9, and underscore (\_)
 
 ```typescript
 const schema = {
-  foo: Schema.string.token,
+  foo: Schema.string().token(),
 };
 ```
 
-##### `.alphanum`
+##### `.alphanum()`
 
 Insures that the given string only contains a-z, A-Z, 0-9
 
 ```typescript
 const schema = {
-  foo: Schema.string.alphanum,
+  foo: Schema.string().alphanum(),
 };
 ```
 
-##### `.numeral`
+##### `.numeral()`
 
 Insures that the given string only contains 0-9
 
 ```typescript
 const schema = {
-  foo: Schema.string.numeral,
+  foo: Schema.string().numeral(),
 };
 ```
 
-##### `.ip`
+##### `.ip()`
 
 Insures that the given string is an ipv4 or ipv6
 
 ```typescript
 const schema = {
-  foo: Schema.string.ip,
+  foo: Schema.string().ip(),
 };
 ```
 
-##### `.ipv4`
+##### `.ipv4()`
 
 Insures that the given string is an ipv4
 
 ```typescript
 const schema = {
-  foo: Schema.string.ipv4,
+  foo: Schema.string().ipv4(),
 };
 ```
 
-##### `.ipv6`
+##### `.ipv6()`
 
 Insures that the given string is an ipv6
 
 ```typescript
 const schema = {
-  foo: Schema.string.ipv6,
+  foo: Schema.string().ipv6(),
 };
 ```
 
-##### `.email`
+##### `.email()`
 
 Insures that the given string is an email address
 
 ```typescript
 const schema = {
-  foo: Schema.string.email,
+  foo: Schema.string().email(),
 };
 ```
 
-##### `.creditCard`
+##### `.creditCard()`
 
 Insures that the given string is a credit-card
 
 ```typescript
 const schema = {
-  foo: Schema.string.creditCard,
+  foo: Schema.string().creditCard(),
 };
 ```
 
@@ -373,7 +408,7 @@ Insures that the given string contains at least `length` characters
 
 ```typescript
 const schema = {
-  foo: Schema.string.min(2),
+  foo: Schema.string().min(2),
 };
 ```
 
@@ -383,7 +418,7 @@ Insures that the given string contains at most `length` characters
 
 ```typescript
 const schema = {
-  foo: Schema.string.max(2),
+  foo: Schema.string().max(2),
 };
 ```
 
@@ -393,7 +428,7 @@ Insures that the given string contains exactly `num` characters
 
 ```typescript
 const schema = {
-  foo: Schema.string.length(2),
+  foo: Schema.string().length(2),
 };
 ```
 
@@ -403,7 +438,7 @@ Insures that the given string matches `regex`
 
 ```typescript
 const schema = {
-  foo: Schema.string.regex(/^Hello/),
+  foo: Schema.string().regex(/^Hello/),
 };
 ```
 
@@ -413,7 +448,7 @@ Insures that the given string is one of the given `enum` values
 
 ```typescript
 const schema = {
-  foo: Schema.string.enum(["Hello", "World"]),
+  foo: Schema.string().enum(["Hello", "World"]),
 };
 ```
 
@@ -423,7 +458,7 @@ Converts the given string to a truncated string with the given `length` and the 
 
 ```typescript
 const schema = {
-  foo: Schema.string.truncate(8, "*"),
+  foo: Schema.string().truncate(8, "*"),
 };
 ```
 
@@ -433,7 +468,7 @@ Replaces everything that matches `pattern` in the given string with the given `r
 
 ```typescript
 const schema = {
-  foo: Schema.string.replace("Hello!", "Hello World!"),
+  foo: Schema.string().replace("Hello!", "Hello World!"),
 };
 ```
 

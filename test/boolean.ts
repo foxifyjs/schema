@@ -1,8 +1,8 @@
 import * as Schema from "../src";
 
 it("should have an error because of the required field", () => {
-  const schema = Schema.object.keys({
-    foo: Schema.boolean.required,
+  const schema = Schema.object({
+    foo: Schema.boolean().required(),
   });
 
   const value = {};
@@ -15,7 +15,7 @@ it("should have an error because of the required field", () => {
 
 it("should set the default value", () => {
   const schema = {
-    foo: Schema.boolean.default(false),
+    foo: Schema.boolean().default(false),
   };
 
   const value = {};
@@ -28,11 +28,11 @@ it("should set the default value", () => {
 
 test("multiple checks", () => {
   const schema = {
-    bar: Schema.boolean.default(true).required,
-    boolean1: Schema.boolean.required,
-    boolean2: Schema.boolean,
-    boolean3: Schema.boolean,
-    foo: Schema.boolean.default(false),
+    bar: Schema.boolean().default(true).required(),
+    boolean1: Schema.boolean().required(),
+    boolean2: Schema.boolean(),
+    boolean3: Schema.boolean(),
+    foo: Schema.boolean().default(false),
   };
 
   const value = {

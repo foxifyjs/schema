@@ -1,9 +1,26 @@
 import * as Schema from "../src";
 
+test("port", () => {
+  const schema = {
+    bar: Schema.number().port(),
+    foo: Schema.number().port(),
+  };
+
+  const value = {
+    bar: 80,
+    foo: 100000,
+  };
+
+  const result = Schema.validate(schema, value);
+
+  expect(result.errors).toEqual({ foo: ["Must be a valid port (0 - 65535)"] });
+  expect(result.value).toEqual({ bar: 80, foo: 100000 });
+});
+
 test("integer", () => {
   const schema = {
-    bar: Schema.number.integer,
-    foo: Schema.number.integer,
+    bar: Schema.number().integer(),
+    foo: Schema.number().integer(),
   };
 
   const value = {
@@ -19,8 +36,8 @@ test("integer", () => {
 
 test("positive", () => {
   const schema = {
-    bar: Schema.number.positive,
-    foo: Schema.number.positive,
+    bar: Schema.number().positive(),
+    foo: Schema.number().positive(),
   };
 
   const value = {
@@ -36,8 +53,8 @@ test("positive", () => {
 
 test("negative", () => {
   const schema = {
-    bar: Schema.number.negative,
-    foo: Schema.number.negative,
+    bar: Schema.number().negative(),
+    foo: Schema.number().negative(),
   };
 
   const value = {
@@ -53,8 +70,8 @@ test("negative", () => {
 
 test("min", () => {
   const schema = {
-    bar: Schema.number.min(1),
-    foo: Schema.number.min(10.4),
+    bar: Schema.number().min(1),
+    foo: Schema.number().min(10.4),
   };
 
   const value = {
@@ -70,8 +87,8 @@ test("min", () => {
 
 test("max", () => {
   const schema = {
-    bar: Schema.number.max(5),
-    foo: Schema.number.max(10.4),
+    bar: Schema.number().max(5),
+    foo: Schema.number().max(10.4),
   };
 
   const value = {
@@ -87,8 +104,8 @@ test("max", () => {
 
 test("precision", () => {
   const schema = {
-    bar: Schema.number.precision(1),
-    foo: Schema.number.precision(2),
+    bar: Schema.number().precision(1),
+    foo: Schema.number().precision(2),
   };
 
   const value = {
@@ -98,15 +115,17 @@ test("precision", () => {
 
   const result = Schema.validate(schema, value);
 
-  expect(result.errors).toEqual({ foo: ["Must be have at most 2 decimal places"] });
+  expect(result.errors).toEqual({
+    foo: ["Must be have at most 2 decimal places"],
+  });
   expect(result.value).toEqual({ bar: 4, foo: 15.854 });
 });
 
 test("multipliedBy", () => {
   const schema = {
-    bar: Schema.number.multipliedBy(2),
-    foo: Schema.number.multipliedBy(3),
-    something: Schema.number,
+    bar: Schema.number().multipliedBy(2),
+    foo: Schema.number().multipliedBy(3),
+    something: Schema.number(),
   };
 
   const value = {
@@ -117,7 +136,9 @@ test("multipliedBy", () => {
 
   const result = Schema.validate(schema, value);
 
-  expect(result.errors)
-    .toEqual({ foo: ["Must be a multiple of 3"], something: ["Must be a number"] });
+  expect(result.errors).toEqual({
+    foo: ["Must be a multiple of 3"],
+    something: ["Must be a number"],
+  });
   expect(result.value).toEqual({ bar: 4, foo: 15.854, something: "else" });
 });

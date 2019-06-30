@@ -6,42 +6,41 @@ import NumberType from "./Number";
 import ObjectType from "./Object";
 import StringType from "./String";
 
-namespace Schema { }
+export function validate<P extends object = object>(
+  schema: object | ObjectType<P>,
+  value: object,
+): { errors: object | null; value: P } {
+  if (!(schema instanceof ObjectType)) schema = object(schema);
 
-const Schema = {
-  validate: <P extends object = object>(
-    schema: object | ObjectType<P>,
-    value: object,
-  ): { errors: object | null, value: P } => {
-    if (!(schema instanceof ObjectType)) schema = Schema.object.keys(schema);
+  const result = (schema as any)._validate("", value);
 
-    const result = (schema as any)._validate("", value);
+  let errors: { [key: string]: string[] } | null = result.errors;
 
-    let errors: { [key: string]: string[] } | null = result.errors;
+  if (!size(errors as object)) errors = null;
 
-    if (!size(errors as object)) errors = null;
+  return { errors, value: result.value };
+}
 
-    return { errors, value: result.value };
-  },
+export function array<T = any>() {
+  return new ArrayType<T>();
+}
 
-  get array() {
-    return new ArrayType();
-  },
-  get boolean() {
-    return new BooleanType();
-  },
-  get date() {
-    return new DateType();
-  },
-  get number() {
-    return new NumberType();
-  },
-  get object() {
-    return new ObjectType();
-  },
-  get string() {
-    return new StringType();
-  },
-};
+export function boolean() {
+  return new BooleanType();
+}
 
-export = Schema;
+export function date() {
+  return new DateType();
+}
+
+export function number() {
+  return new NumberType();
+}
+
+export function object<T extends object = object>(obj?: T) {
+  return new ObjectType<T>(obj);
+}
+
+export function string() {
+  return new StringType();
+}
