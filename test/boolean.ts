@@ -9,7 +9,7 @@ it("should have an error because of the required field", () => {
 
   const result = Schema.validate(schema, value);
 
-  expect(result.errors).toEqual({ foo: ["Must be provided"] });
+  expect(result.errors).toEqual({ foo: ["Expected to be provided"] });
   expect(result.value).toEqual({});
 });
 
@@ -28,7 +28,9 @@ it("should set the default value", () => {
 
 test("multiple checks", () => {
   const schema = {
-    bar: Schema.boolean().default(true).required(),
+    bar: Schema.boolean()
+      .default(true)
+      .required(),
     boolean1: Schema.boolean().required(),
     boolean2: Schema.boolean(),
     boolean3: Schema.boolean(),
@@ -42,7 +44,9 @@ test("multiple checks", () => {
 
   const result = Schema.validate(schema, value);
 
-  expect(result.errors)
-    .toEqual({ boolean1: ["Must be provided"], boolean3: ["Must be a boolean"] });
+  expect(result.errors).toEqual({
+    boolean1: ["Expected to be provided"],
+    boolean3: ["Expected to be a boolean"],
+  });
   expect(result.value).toEqual({ bar: true, foo: false, boolean3: "hello" });
 });

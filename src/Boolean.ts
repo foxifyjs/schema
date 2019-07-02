@@ -1,5 +1,5 @@
 import Base from "./Any";
-import { boolean, TYPE } from "./utils";
+import { boolean, NULL, TYPE } from "./utils";
 
 const { isBoolean } = boolean;
 
@@ -7,9 +7,9 @@ class Type extends Base<boolean> {
   protected static type = TYPE.BOOLEAN;
 
   protected _base(value: any) {
-    if (isBoolean(value)) return null;
+    if (isBoolean(value)) return NULL;
 
-    return "Must be a boolean";
+    return "Expected to be a boolean";
   }
 }
 

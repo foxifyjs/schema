@@ -1,16 +1,20 @@
 import assert from "assert";
 import Base from "./Any";
-import { number, object, string, TYPE } from "./utils";
+import { mergeErrors, NULL, number, object, TYPE } from "./utils";
 
 const { isNumber } = number;
 const { isObject, keys, mapValues, reduce } = object;
-const { isEmpty } = string;
 
-class Type<T extends object = object> extends Base<T> {
+class Type<
+  T extends object = object,
+  P extends { [key in string | number]: Base } = {}
+> extends Base<T, { keys?: P; unknown: boolean }> {
   protected static type = TYPE.OBJECT;
 
-  constructor(obj?: T) {
+  constructor(obj?: P) {
     super();
+
+    this.details.unknown = false;
 
     if (obj == null) return this;
 
@@ -21,71 +25,91 @@ class Type<T extends object = object> extends Base<T> {
 
       assert(
         isObject(value),
-        "Expected obj's values to be object or an schema type",
+        "Expected obj's values to be object or valid schema type",
       );
 
       return new Type(value);
     }) as any;
 
-    return this._pipe((value, path) =>
-      reduce(
-        obj as T,
-        (prev, type: any, key) => {
-          const result = type._validate(
-            isEmpty(path) ? key : `${path}.${key}`,
-            value[key],
-          );
+    this.details.keys = obj;
 
-          prev.errors = Object.assign({}, prev.errors, result.errors);
+    return this._pipe(value =>
+      reduce(
+        obj as P,
+        (prev, type, key) => {
+          const result = type.validate((value as any)[key]);
 
           if (result.value !== undefined) prev.value[key] = result.value;
 
+          prev.errors = mergeErrors<T>(prev.errors, {
+            [key]: result.errors,
+          } as any);
+
           return prev;
         },
-        { value: {} as any, errors: {} as any },
+        {
+          value: this.details.unknown ? value : ({} as any),
+          errors: NULL as Base.ValidationResult<T>["errors"],
+        },
       ),
     );
   }
 
+  public unknown() {
+    this.details.unknown = true;
+
+    return this;
+  }
+
   public min(num: number) {
-    assert(isNumber(num), "'num' must be a number");
-    assert(num >= 0, "'num' must be a positive number");
-    assert(Number.isInteger(num), "'num' must be an integer");
+    assert(
+      isNumber(num) && Number.isInteger(num) && num >= 0,
+      "Expected num to be a positive integer",
+    );
 
     return this._pipe(value => ({
       value,
       errors:
-        keys(value).length < num ? `Must have at least ${num} key(s)` : {},
+        keys(value).length < num
+          ? `Expected to have at least ${num} key(s)`
+          : NULL,
     }));
   }
 
   public max(num: number) {
-    assert(isNumber(num), "'num' must be a number");
-    assert(num >= 0, "'num' must be a positive number");
-    assert(Number.isInteger(num), "'num' must be an integer");
-
-    return this._pipe(value => ({
-      value,
-      errors: keys(value).length > num ? `Must have at most ${num} key(s)` : {},
-    }));
-  }
-
-  public length(num: number) {
-    assert(isNumber(num), "'num' must be a number");
-    assert(num >= 0, "'num' must be a positive number");
-    assert(Number.isInteger(num), "'num' must be an integer");
+    assert(
+      isNumber(num) && Number.isInteger(num) && num >= 0,
+      "Expected num to be a positive integer",
+    );
 
     return this._pipe(value => ({
       value,
       errors:
-        keys(value).length !== num ? `Must have exactly ${num} key(s)` : {},
+        keys(value).length > num
+          ? `Expected to have at most ${num} key(s)`
+          : NULL,
+    }));
+  }
+
+  public length(num: number) {
+    assert(
+      isNumber(num) && Number.isInteger(num) && num >= 0,
+      "Expected num to be a positive integer",
+    );
+
+    return this._pipe(value => ({
+      value,
+      errors:
+        keys(value).length !== num
+          ? `Expected to have exactly ${num} key(s)`
+          : NULL,
     }));
   }
 
   protected _base(value: any) {
-    if (isObject(value)) return null;
+    if (isObject(value)) return NULL;
 
-    return "Must be an object";
+    return "Expected to be an object";
   }
 }
 

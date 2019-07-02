@@ -1,15 +1,25 @@
 import assert from "assert";
-import { func, object, string, TYPE } from "./utils";
+import { func, mergeErrors, NULL, TYPE } from "./utils";
 
 const { isFunction } = func;
-const { forEach } = object;
-const { isString } = string;
 
 namespace Type {
-  export type PipelineItem<T> = (
-    value: T,
-    path: string,
-  ) => { value: T; errors: string | { [key: string]: string } };
+  export type Error<T> =
+    | string[]
+    | string
+    | null
+    | (T extends object
+        ? { [key in string | number]: string[] }
+        : T extends any[]
+        ? { [key: string]: string[] }
+        : null);
+
+  export type PipelineItem<T> = (value: T) => { value: T; errors: Error<T> };
+
+  export interface ValidationResult<T> {
+    value: T;
+    errors: Error<T>;
+  }
 
   export interface Options<T> {
     def: () => T | undefined;
@@ -17,101 +27,80 @@ namespace Type {
   }
 }
 
-abstract class Type<T = any> {
+abstract class Type<T = any, O extends object = {}> {
   public static isType = (value: any): value is Type => value instanceof Type;
 
   protected static type: string = TYPE.ANY;
 
-  protected _options: Type.Options<T> = {
+  public details: Type.Options<T> & O = {
     def: () => undefined,
     required: false,
-  };
+  } as Type.Options<T> & O;
 
   protected _pipeline: Array<Type.PipelineItem<T>> = [];
 
   public default(value: T | (() => T)) {
     if (isFunction(value)) {
-      this._options.def = value;
+      this.details.def = value;
 
       return this;
     }
 
     assert(
       !this._base(value),
-      `The given value must be of "${
-        (this.constructor as typeof Type).type
-      }" type`,
+      `Expected value to be ${(this.constructor as typeof Type).type}`,
     );
 
-    this._options.def = () => value;
+    this.details.def = () => value;
 
     return this;
   }
 
   public required(required = true) {
-    this._options.required = required;
+    this.details.required = required;
 
     return this;
   }
 
-  protected _pipe(...items: Array<Type.PipelineItem<T>>) {
-    this._pipeline = this._pipeline.concat(items);
-
-    return this;
-  }
-
-  protected _validate(
-    path: string,
-    value: any,
-  ): { value: T; errors: { [key: string]: string[] } } {
-    const { def, required } = this._options;
+  public validate(value: any): Type.ValidationResult<T> {
+    const { def, required } = this.details;
 
     if (value == null) {
       value = def();
 
       if (value == null) {
         if (required) {
-          return { value, errors: { [path]: ["Must be provided"] } };
+          return {
+            value,
+            errors: ["Expected to be provided"],
+          };
         }
 
-        return { value, errors: {} };
+        return { value, errors: NULL };
       }
     }
 
     const baseError = this._base(value);
-    if (baseError) return { value, errors: { [path]: [baseError] } };
+    if (baseError) return { value, errors: [baseError] };
 
-    const errors = this._pipeline.reduce(
+    return this._pipeline.reduce(
       (prev, tester) => {
-        const result = tester(value, path);
+        const result = tester(prev.value);
 
-        value = result.value;
+        prev.value = result.value;
 
-        let errs = result.errors;
-
-        if (isString(errs)) errs = { [path]: errs };
-
-        forEach(errs, (err: any, key) => {
-          if (!Array.isArray(err)) err = [err];
-
-          if (prev[key]) {
-            prev[key] = prev[key].concat(err);
-
-            return;
-          }
-
-          prev[key] = err;
-        });
+        prev.errors = mergeErrors<T>(prev.errors, result.errors);
 
         return prev;
       },
-      {} as { [key: string]: string[] },
+      { value, errors: NULL as Type.ValidationResult<T>["errors"] },
     );
+  }
 
-    return {
-      errors,
-      value,
-    };
+  protected _pipe(...items: Array<Type.PipelineItem<T>>) {
+    this._pipeline = this._pipeline.concat(items);
+
+    return this;
   }
 
   protected abstract _base(value: any): string | null;

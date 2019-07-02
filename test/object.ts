@@ -11,11 +11,11 @@ test("keys", () => {
     schema = {
       bar: keys,
       foo: Schema.object(keys),
-      fooBar1: Schema.object({ something: 1 }).required(),
+      fooBar1: Schema.object({ something: 1 } as any).required(),
     };
   } catch (error) {
     expect(error.message).toBe(
-      "Expected obj's values to be object or an schema type",
+      "Expected obj's values to be object or valid schema type",
     );
   }
 
@@ -31,17 +31,38 @@ test("keys", () => {
     fooBar1: "not an object",
   };
 
-  const result = Schema.validate(schema, value);
+  const result = Schema.validate(schema as any, value);
 
   expect(result.errors).toEqual({
-    "foo.something": ["Must be provided"],
-    fooBar1: ["Must be an object"],
+    "foo.something": ["Expected to be provided"],
+    fooBar1: ["Expected to be an object"],
   });
   expect(result.value).toEqual({
     bar: { hello: "world", something: "something" },
     foo: { hello: "there!" },
     fooBar1: "not an object",
   });
+});
+
+test("unknown", () => {
+  const schema = Schema.object({
+    foo: Schema.number(),
+  });
+
+  const value = {
+    foo: 1,
+    bar: 2,
+  };
+
+  let result = Schema.validate(schema, value);
+
+  expect(result.errors).toBe(null);
+  expect(result.value).toEqual({ foo: 1 });
+
+  result = Schema.validate(schema.unknown(), value);
+
+  expect(result.errors).toBe(null);
+  expect(result.value).toEqual({ foo: 1, bar: 2 });
 });
 
 test("min", () => {
@@ -58,7 +79,7 @@ test("min", () => {
   const result = Schema.validate(schema, value);
 
   expect(result.errors).toEqual({
-    foo: ["Must have at least 1 key(s)"],
+    foo: ["Expected to have at least 1 key(s)"],
   });
   expect(result.value).toEqual({
     foo: {},
@@ -80,7 +101,7 @@ test("max", () => {
   const result = Schema.validate(schema, value);
 
   expect(result.errors).toEqual({
-    foo: ["Must have at most 1 key(s)"],
+    foo: ["Expected to have at most 1 key(s)"],
   });
   expect(result.value).toEqual({
     foo: { hello: "world", something: "something" },
@@ -102,7 +123,7 @@ test("length", () => {
   const result = Schema.validate(schema, value);
 
   expect(result.errors).toEqual({
-    foo: ["Must have exactly 1 key(s)"],
+    foo: ["Expected to have exactly 1 key(s)"],
   });
   expect(result.value).toEqual({
     foo: { hello: "world", something: "something" },

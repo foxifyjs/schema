@@ -48,11 +48,15 @@ npm i -s @foxify/schema
 const Schema = require("@foxify/schema");
 
 const schema = {
-  username: Schema.string().alphanum().required(),
+  username: Schema.string()
+    .alphanum()
+    .required(),
   name: {
-    first: Schema.string().min(3).required(),
+    first: Schema.string()
+      .min(3)
+      .required(),
     last: Schema.string().min(3),
-  },
+  }, // since "name" has a required field, "name" itself would become required too
   datetime: Schema.date().default(Date.now),
 };
 
@@ -70,7 +74,7 @@ We use [SemVer](http://semver.org) for versioning. For the versions available, s
 
 ## Authors
 
-- **Ardalan Amini** - *Core Maintainer* - [@ardalanamini](https://github.com/ardalanamini)
+- **Ardalan Amini** - _Core Maintainer_ - [@ardalanamini](https://github.com/ardalanamini)
 
 See also the list of [contributors](https://github.com/foxifyjs/schema/contributors) who participated in this project.
 

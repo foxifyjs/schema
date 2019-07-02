@@ -1,6 +1,6 @@
 import assert from "assert";
 import Base from "./Any";
-import { number, string, TYPE } from "./utils";
+import { NULL, number, string, TYPE } from "./utils";
 
 const { isNumber } = number;
 const { isString, truncate } = string;
@@ -44,8 +44,8 @@ class Type extends Base<string> {
     return this._pipe(value => ({
       value,
       errors: !/^[a-zA-Z0-9_]*$/.test(value)
-        ? `Must only contain a-z, A-Z, 0-9, and underscore (_)`
-        : {},
+        ? "Expected to only contain a-z, A-Z, 0-9, and underscore (_)"
+        : NULL,
     }));
   }
 
@@ -53,140 +53,159 @@ class Type extends Base<string> {
     return this._pipe(value => ({
       value,
       errors: !/^[a-zA-Z0-9]*$/.test(value)
-        ? `Must only contain a-z, A-Z, 0-9`
-        : {},
+        ? "Expected to only contain a-z, A-Z, 0-9"
+        : NULL,
     }));
   }
 
   public numeral() {
     return this._pipe(value => ({
       value,
-      errors: !/^[0-9]*$/.test(value) ? `Must only contain numbers` : {},
+      errors: !/^[0-9]*$/.test(value)
+        ? "Expected to only contain numbers"
+        : NULL,
     }));
   }
 
-  public ip() {
-    return this._pipe(value => ({
-      value,
-      errors: !(ipv4Regex.test(value) || ipv6Regex.test(value))
-        ? `Must be an ipv4 or ipv6`
-        : {},
-    }));
-  }
+  public ip(version?: 4 | 6) {
+    if (version != null) {
+      assert(version === 4 || version === 6, "Expected version to be 4 or 6");
+    }
 
-  public ipv4() {
-    return this._pipe(value => ({
-      value,
-      errors: !ipv4Regex.test(value) ? `Must be an ipv4` : {},
-    }));
-  }
+    let tester: (value: string) => false | string;
+    if (version === 4) {
+      tester = value =>
+        !ipv4Regex.test(value) && "Expected to be a valid ipv4 address";
+    } else if (version === 6) {
+      tester = value =>
+        !ipv6Regex.test(value) && "Expected to be a valid ipv6 address";
+    } else {
+      tester = value =>
+        !(ipv4Regex.test(value) || ipv6Regex.test(value)) &&
+        "Expected to be a valid ip address";
+    }
 
-  public ipv6() {
-    return this._pipe(value => ({
-      value,
-      errors: !ipv6Regex.test(value) ? `Must be an ipv6` : {},
-    }));
+    return this._pipe(value => ({ value, errors: tester(value) || NULL }));
   }
 
   public email() {
     return this._pipe(value => ({
       value,
       errors: !/^\w[\w\.]+@\w+?\.[a-zA-Z]{2,3}$/.test(value)
-        ? "Must be an email address"
-        : {},
+        ? "Expected to be a valid email address"
+        : NULL,
     }));
   }
 
   public creditCard() {
     return this._pipe(value => ({
       value,
-      errors: !verifyCreditCard(value) ? "Must be a credit-card" : {},
+      errors: !verifyCreditCard(value)
+        ? "Expected to be a valid credit-card"
+        : NULL,
     }));
   }
 
   public min(num: number) {
-    assert(isNumber(num), "'num' must be a number");
-    assert(num >= 0, "'num' must be a positive number");
+    assert(
+      isNumber(num) && Number.isInteger(num) && num >= 0,
+      "Expected num to be a positive integer",
+    );
 
     return this._pipe(value => ({
       value,
-      errors: value.length < num ? `Must be at least ${num} characters` : {},
+      errors:
+        value.length < num
+          ? `Expected to have at least ${num} character(s)`
+          : NULL,
     }));
   }
 
   public max(num: number) {
-    assert(isNumber(num), "'num' must be a number");
-    assert(num >= 0, "'num' must be a positive number");
+    assert(
+      isNumber(num) && Number.isInteger(num) && num >= 0,
+      "Expected num to be a positive integer",
+    );
 
     return this._pipe(value => ({
       value,
-      errors: value.length > num ? `Must be at most ${num} characters` : {},
+      errors:
+        value.length > num
+          ? `Expected to have at most ${num} character(s)`
+          : NULL,
     }));
   }
 
   public length(num: number) {
-    assert(isNumber(num), "'num' must be a number");
-    assert(num >= 0, "'num' must be a positive number");
+    assert(
+      isNumber(num) && Number.isInteger(num) && num >= 0,
+      "Expected num to be a positive integer",
+    );
 
     return this._pipe(value => ({
       value,
-      errors: value.length !== num ? `Must be exactly ${num} characters` : {},
+      errors:
+        value.length !== num
+          ? `Expected to have exactly ${num} character(s)`
+          : NULL,
     }));
   }
 
   public regex(regex: RegExp) {
-    assert(regex instanceof RegExp, "'regex' must be a regex");
+    assert(regex instanceof RegExp, "Expected regex to be a valid regex");
 
     return this._pipe(value => ({
       value,
-      errors: !regex.test(value) ? `Must match ${regex}` : {},
+      errors: !regex.test(value) ? `Expected to match ${regex}` : NULL,
     }));
   }
 
   public enum(enums: string[]) {
     enums.forEach(str =>
-      assert(isString(str), "'enums' must be an string array"),
+      assert(isString(str), "Expected enums to be an array of string"),
     );
 
     const TYPE = JSON.stringify(enums);
 
     return this._pipe(value => ({
       value,
-      errors: !enums.includes(value) ? `Must be one of ${TYPE}` : {},
+      errors: !enums.includes(value) ? `Expected to be one of ${TYPE}` : NULL,
     }));
   }
 
   /******************** CASTS ********************/
 
   public truncate(length: number, truncateString?: string) {
-    assert(isNumber(length), "'length' must be a number");
-    assert(length >= 0, "'length' must be a positive number");
+    assert(
+      isNumber(length) && Number.isInteger(length) && length >= 0,
+      "Expected length to be a positive integer",
+    );
 
     return this._pipe(value => ({
       value: truncate(value, length, truncateString),
-      errors: {},
+      errors: NULL,
     }));
   }
 
   public replace(pattern: string | RegExp, replacement: string) {
     assert(
       isString(pattern) || pattern instanceof RegExp,
-      "'pattern' must be string or regex",
+      "Expected to pattern to be string or regex",
     );
-    assert(isString(replacement), "'replacement' must be an string");
+    assert(isString(replacement), "Expected replacement to be an string");
 
     return this._pipe(value => ({
       value: value.replace(pattern, replacement),
-      errors: {},
+      errors: NULL,
     }));
   }
 
   /******************** BASE ********************/
 
   protected _base(value: any) {
-    if (isString(value)) return null;
+    if (isString(value)) return NULL;
 
-    return "Must be an string";
+    return "Expected to be an string";
   }
 }
 

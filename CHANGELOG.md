@@ -12,9 +12,13 @@
 
 ---
 
-## [next](https://github.com/foxifyjs/schema/releases/tag/next) - _(2018-**-**)_
+## [v1.2.0](https://github.com/foxifyjs/schema/releases/tag/v1.2.0) - _(2018-07-02)_
 
 - :boom: All methods are functions now (`.required` => `.required()`)
+- :boom: All error messages are changed
+- :zap: Made `validate` method in all schema types publicly accessible
+- :zap: Added `details` property to all schema types to make some inside details publicly accessible
+- :zap: Added `unknown` method to object schema type
 - :zap: Added `min` method to object schema type
 - :zap: Added `max` method to object schema type
 - :zap: Added `length` method to object schema type

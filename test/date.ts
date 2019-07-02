@@ -15,7 +15,7 @@ it("should fail to cast boolean to date", () => {
 
   const result = Schema.validate(schema, value);
 
-  expect(result.errors).toEqual({ foo: ["Must be a valid date"] });
+  expect(result.errors).toEqual({ foo: ["Expected to be a valid date"] });
   expect(result.value).toEqual({ foo: true });
 });
 
@@ -195,7 +195,7 @@ test("complex", async () => {
   const result = Schema.validate(schema, value);
 
   expect(result.errors).toBeInstanceOf(Object);
-  expect((result.errors as any).bar).toEqual(["Must be a valid date"]);
+  expect((result.errors as any).bar).toEqual(["Expected to be a valid date"]);
   expect((result.errors as any).foo).toBeInstanceOf(Array);
   expect((result.errors as any).foo.length).toBe(2);
   expect(typeof (result.errors as any).foo[0]).toBe("string");

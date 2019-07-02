@@ -13,7 +13,9 @@ test("token", () => {
 
   const result = Schema.validate(schema, value);
 
-  expect(result.errors).toEqual({ foo: ["Must only contain a-z, A-Z, 0-9, and underscore (_)"] });
+  expect(result.errors).toEqual({
+    foo: ["Expected to only contain a-z, A-Z, 0-9, and underscore (_)"],
+  });
   expect(result.value).toEqual({ bar: "dfsASDdf43_", foo: "$asdasf498_" });
 });
 
@@ -30,7 +32,9 @@ test("alphanum", () => {
 
   const result = Schema.validate(schema, value);
 
-  expect(result.errors).toEqual({ foo: ["Must only contain a-z, A-Z, 0-9"] });
+  expect(result.errors).toEqual({
+    foo: ["Expected to only contain a-z, A-Z, 0-9"],
+  });
   expect(result.value).toEqual({ bar: "dfsdf43ASAD", foo: "$asdasf498_" });
 });
 
@@ -47,7 +51,9 @@ test("numeral", () => {
 
   const result = Schema.validate(schema, value);
 
-  expect(result.errors).toEqual({ foo: ["Must only contain numbers"] });
+  expect(result.errors).toEqual({
+    foo: ["Expected to only contain numbers"],
+  });
   expect(result.value).toEqual({ bar: "65464", foo: "$asdasf498_" });
 });
 
@@ -66,7 +72,9 @@ test("ip", () => {
 
   const result = Schema.validate(schema, value);
 
-  expect(result.errors).toEqual({ foo: ["Must be an ipv4 or ipv6"] });
+  expect(result.errors).toEqual({
+    foo: ["Expected to be a valid ip address"],
+  });
   expect(result.value).toEqual({
     foo: "$asdasf498_",
     googleIpv4: "172.217.16.142",
@@ -76,8 +84,8 @@ test("ip", () => {
 
 test("ipv4", () => {
   const schema = {
-    foo: Schema.string().ipv4(),
-    google: Schema.string().ipv4(),
+    foo: Schema.string().ip(4),
+    google: Schema.string().ip(4),
   };
 
   const value = {
@@ -87,7 +95,9 @@ test("ipv4", () => {
 
   const result = Schema.validate(schema, value);
 
-  expect(result.errors).toEqual({ foo: ["Must be an ipv4"] });
+  expect(result.errors).toEqual({
+    foo: ["Expected to be a valid ipv4 address"],
+  });
   expect(result.value).toEqual({
     foo: "2a00:1450:4001:816::200e",
     google: "172.217.16.142",
@@ -96,8 +106,8 @@ test("ipv4", () => {
 
 test("ipv6", () => {
   const schema = {
-    foo: Schema.string().ipv6(),
-    google: Schema.string().ipv6(),
+    foo: Schema.string().ip(6),
+    google: Schema.string().ip(6),
   };
 
   const value = {
@@ -107,7 +117,9 @@ test("ipv6", () => {
 
   const result = Schema.validate(schema, value);
 
-  expect(result.errors).toEqual({ foo: ["Must be an ipv6"] });
+  expect(result.errors).toEqual({
+    foo: ["Expected to be a valid ipv6 address"],
+  });
   expect(result.value).toEqual({
     foo: "172.217.16.142",
     google: "2a00:1450:4001:816::200e",
@@ -127,7 +139,9 @@ test("email", () => {
 
   const result = Schema.validate(schema, value);
 
-  expect(result.errors).toEqual({ foo: ["Must be an email address"] });
+  expect(result.errors).toEqual({
+    foo: ["Expected to be a valid email address"],
+  });
   expect(result.value).toEqual({
     bar: "ardalanamini22@gmail.com",
     foo: "gmail.com",
@@ -147,7 +161,9 @@ test("creditCard", () => {
 
   const result = Schema.validate(schema, value);
 
-  expect(result.errors).toEqual({ foo: ["Must be a credit-card"] });
+  expect(result.errors).toEqual({
+    foo: ["Expected to be a valid credit-card"],
+  });
   expect(result.value).toEqual({
     bar: "1111-2222-3333-4444",
     foo: "2342-3423-4234-2342",
@@ -167,7 +183,9 @@ test("min", () => {
 
   const result = Schema.validate(schema, value);
 
-  expect(result.errors).toEqual({ foo: ["Must be at least 5 characters"] });
+  expect(result.errors).toEqual({
+    foo: ["Expected to have at least 5 character(s)"],
+  });
   expect(result.value).toEqual(value);
 });
 
@@ -184,7 +202,9 @@ test("max", () => {
 
   const result = Schema.validate(schema, value);
 
-  expect(result.errors).toEqual({ foo: ["Must be at most 5 characters"] });
+  expect(result.errors).toEqual({
+    foo: ["Expected to have at most 5 character(s)"],
+  });
   expect(result.value).toEqual(value);
 });
 
@@ -201,7 +221,9 @@ test("length", () => {
 
   const result = Schema.validate(schema, value);
 
-  expect(result.errors).toEqual({ foo: ["Must be exactly 5 characters"] });
+  expect(result.errors).toEqual({
+    foo: ["Expected to have exactly 5 character(s)"],
+  });
   expect(result.value).toEqual(value);
 });
 
@@ -218,7 +240,7 @@ test("regex", () => {
 
   const result = Schema.validate(schema, value);
 
-  expect(result.errors).toEqual({ foo: ["Must match /\\d/"] });
+  expect(result.errors).toEqual({ foo: ["Expected to match /\\d/"] });
   expect(result.value).toEqual(value);
 });
 
@@ -235,7 +257,9 @@ test("enum", () => {
 
   const result = Schema.validate(schema, value);
 
-  expect(result.errors).toEqual({ foo: ["Must be one of [\"john\",\"doe\"]"] });
+  expect(result.errors).toEqual({
+    foo: ['Expected to be one of ["john","doe"]'],
+  });
   expect(result.value).toEqual(value);
 });
 

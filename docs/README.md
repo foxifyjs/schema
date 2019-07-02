@@ -27,6 +27,7 @@ TypeScript ready object schema validation
     - [`.multipliedBy(num: number)`](#multipliedBynum-number)
   - [Object](#Object)
     - [`object(obj: object)`](#objectobj-object)
+    - [`unknown()`](#unknown)
     - [`min(n: number)`](#minn-number)
     - [`max(n: number)`](#maxn-number)
     - [`length(n: number)`](#lengthn-number)
@@ -282,6 +283,24 @@ const schema = {
 };
 ```
 
+##### `unknown()`
+
+Determines that the unknown keys should be included in the resulted object too (without any validation of course)
+
+```typescript
+const schema = {
+  foo: Schema.object({ bar: Schema.number() }).unknown(),
+};
+```
+
+Please note that it won't be necessary if you're not specifying the object keys like the example below:
+
+```typescript
+const schema = {
+  foo: Schema.object(),
+};
+```
+
 ##### `min(n: number)`
 
 Insures that the given object has at least `n` key(s)
@@ -479,9 +498,24 @@ Validates the given value according to the given schema
 ```typescript
 const result = Schema.validate(schema, value);
 /*
- * {
+ * interface {
  *   errors: { [path to the wrong value]: Array<error string> } | null,
  *   value: object,
+ * }
+ */
+```
+
+You can also validate any schema type directly like the example below
+
+```typescript
+const result = Schema.number()
+  .min(22)
+  .required()
+  .validate(value);
+/*
+ * interface {
+ *   errors: { [path to the wrong value]: Array<error string> } | null,
+ *   value: number,
  * }
  */
 ```

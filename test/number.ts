@@ -13,7 +13,9 @@ test("port", () => {
 
   const result = Schema.validate(schema, value);
 
-  expect(result.errors).toEqual({ foo: ["Must be a valid port (0 - 65535)"] });
+  expect(result.errors).toEqual({
+    foo: ["Expected to be a valid port (0 - 65535)"],
+  });
   expect(result.value).toEqual({ bar: 80, foo: 100000 });
 });
 
@@ -30,7 +32,7 @@ test("integer", () => {
 
   const result = Schema.validate(schema, value);
 
-  expect(result.errors).toEqual({ foo: ["Must be an integer"] });
+  expect(result.errors).toEqual({ foo: ["Expected to be an integer"] });
   expect(result.value).toEqual({ bar: 1, foo: 1.5 });
 });
 
@@ -47,7 +49,9 @@ test("positive", () => {
 
   const result = Schema.validate(schema, value);
 
-  expect(result.errors).toEqual({ foo: ["Must be a positive number"] });
+  expect(result.errors).toEqual({
+    foo: ["Expected to be a positive number"],
+  });
   expect(result.value).toEqual({ bar: 1, foo: -1 });
 });
 
@@ -64,7 +68,9 @@ test("negative", () => {
 
   const result = Schema.validate(schema, value);
 
-  expect(result.errors).toEqual({ foo: ["Must be a negative number"] });
+  expect(result.errors).toEqual({
+    foo: ["Expected to be a negative number"],
+  });
   expect(result.value).toEqual({ bar: -1, foo: 1 });
 });
 
@@ -81,7 +87,7 @@ test("min", () => {
 
   const result = Schema.validate(schema, value);
 
-  expect(result.errors).toEqual({ foo: ["Must be at least 10.4"] });
+  expect(result.errors).toEqual({ foo: ["Expected to be at least 10.4"] });
   expect(result.value).toEqual({ bar: 1, foo: 5.8 });
 });
 
@@ -98,7 +104,7 @@ test("max", () => {
 
   const result = Schema.validate(schema, value);
 
-  expect(result.errors).toEqual({ foo: ["Must be at most 10.4"] });
+  expect(result.errors).toEqual({ foo: ["Expected to be at most 10.4"] });
   expect(result.value).toEqual({ bar: 4.9, foo: 15 });
 });
 
@@ -116,7 +122,7 @@ test("precision", () => {
   const result = Schema.validate(schema, value);
 
   expect(result.errors).toEqual({
-    foo: ["Must be have at most 2 decimal places"],
+    foo: ["Expected to have at most 2 decimal places"],
   });
   expect(result.value).toEqual({ bar: 4, foo: 15.854 });
 });
@@ -137,8 +143,8 @@ test("multipliedBy", () => {
   const result = Schema.validate(schema, value);
 
   expect(result.errors).toEqual({
-    foo: ["Must be a multiple of 3"],
-    something: ["Must be a number"],
+    foo: ["Expected to be a multiple of 3"],
+    something: ["Expected to be a number"],
   });
   expect(result.value).toEqual({ bar: 4, foo: 15.854, something: "else" });
 });

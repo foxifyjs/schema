@@ -13,7 +13,9 @@ test("min", () => {
 
   const result = Schema.validate(schema, value);
 
-  expect(result.errors).toEqual({ foo: ["Must be at least 1 item(s)"] });
+  expect(result.errors).toEqual({
+    foo: ["Expected to contain at least 1 item(s)"],
+  });
   expect(result.value).toEqual({ bar: [1, 2], foo: [] });
 });
 
@@ -30,7 +32,9 @@ test("max", () => {
 
   const result = Schema.validate(schema, value);
 
-  expect(result.errors).toEqual({ foo: ["Must be at most 1 item(s)"] });
+  expect(result.errors).toEqual({
+    foo: ["Expected to contain at most 1 item(s)"],
+  });
   expect(result.value).toEqual({ bar: [1, 2], foo: [1, 2] });
 });
 
@@ -47,11 +51,13 @@ test("length", () => {
 
   const result = Schema.validate(schema, value);
 
-  expect(result.errors).toEqual({ foo: ["Must be exactly 1 item(s)"] });
+  expect(result.errors).toEqual({
+    foo: ["Expected to contain exactly 1 item(s)"],
+  });
   expect(result.value).toEqual({ bar: [1, 2, 3], foo: [1, 2] });
 });
 
-test("of", () => {
+test("items", () => {
   const schema = {
     bar: Schema.array().items(Schema.string()),
     foo: Schema.array().items(Schema.number()),
@@ -64,14 +70,17 @@ test("of", () => {
 
   const result = Schema.validate(schema, value);
 
-  expect(result.errors).toEqual({ "bar[0]": ["Must be an string"] });
+  expect(result.errors).toEqual({ "bar[0]": ["Expected to be an string"] });
   expect(result.value).toEqual({ bar: [1], foo: [1, 2] });
 });
 
 test("complex", () => {
   const schema = {
     array1: Schema.array(),
-    bar: Schema.array().min(1).max(3).default([1, 2]),
+    bar: Schema.array()
+      .min(1)
+      .max(3)
+      .default([1, 2]),
     foo: Schema.array().length(1),
   };
 
@@ -82,7 +91,13 @@ test("complex", () => {
 
   const result = Schema.validate(schema, value);
 
-  expect(result.errors)
-    .toEqual({ array1: ["Must be an array"], foo: ["Must be exactly 1 item(s)"] });
-  expect(result.value).toEqual({ array1: "not an array", bar: [1, 2], foo: [1, 2] });
+  expect(result.errors).toEqual({
+    array1: ["Expected to be an array"],
+    foo: ["Expected to contain exactly 1 item(s)"],
+  });
+  expect(result.value).toEqual({
+    array1: "not an array",
+    bar: [1, 2],
+    foo: [1, 2],
+  });
 });

@@ -1,6 +1,6 @@
 import assert from "assert";
 import Base from "./Any";
-import { array, date, number, string, TYPE } from "./utils";
+import { array, date, NULL, number, string, TYPE } from "./utils";
 
 const { prepend } = array;
 const { isDate } = date;
@@ -24,7 +24,10 @@ class Type extends Base<Date | number | string> {
     return this._pipe(value => {
       const min = new Date(generator());
 
-      return { value, errors: value < min ? `Must be at least ${min}` : {} };
+      return {
+        value,
+        errors: value < min ? `Expected to be at least ${min}` : NULL,
+      };
     });
   }
 
@@ -44,7 +47,7 @@ class Type extends Base<Date | number | string> {
 
       return {
         value,
-        errors: value > max ? `Must be at most ${max}` : {},
+        errors: value > max ? `Expected to be at most ${max}` : NULL,
       };
     });
   }
@@ -53,15 +56,15 @@ class Type extends Base<Date | number | string> {
     if (isString(value) || isNumber(value)) {
       prepend(this._pipeline, (val: any) => ({
         value: new Date(val),
-        errors: {},
+        errors: NULL,
       }));
 
       value = new Date(value);
     }
 
-    if (isDate(value) && value.toString() !== "Invalid Date") return null;
+    if (isDate(value) && value.toString() !== "Invalid Date") return NULL;
 
-    return "Must be a valid date";
+    return "Expected to be a valid date";
   }
 }
 
