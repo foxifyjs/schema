@@ -35,9 +35,7 @@ TypeScript ready object schema validation
     - [`.token()`](#token)
     - [`.alphanum()`](#alphanum)
     - [`.numeral()`](#numeral)
-    - [`.ip()`](#ip)
-    - [`.ipv4()`](#ipv4)
-    - [`.ipv6()`](#ipv6)
+    - [`.ip(version?: 4 | 6)`](#ipversion-4--6)
     - [`.email()`](#email)
     - [`.creditCard()`](#creditCard)
     - [`.min(length: number)`](#minlength-number)
@@ -371,33 +369,15 @@ const schema = {
 };
 ```
 
-##### `.ip()`
+##### `.ip(version?: 4 | 6)`
 
 Insures that the given string is an ipv4 or ipv6
 
 ```typescript
 const schema = {
-  foo: Schema.string().ip(),
-};
-```
-
-##### `.ipv4()`
-
-Insures that the given string is an ipv4
-
-```typescript
-const schema = {
-  foo: Schema.string().ipv4(),
-};
-```
-
-##### `.ipv6()`
-
-Insures that the given string is an ipv6
-
-```typescript
-const schema = {
-  foo: Schema.string().ipv6(),
+  foo: Schema.string().ip(), // any ip address
+  bar: Schema.string().ip(4), // any ipv4 address
+  baz: Schema.string().ip(6), // any ipv6 address
 };
 ```
 
