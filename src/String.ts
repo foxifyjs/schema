@@ -165,11 +165,11 @@ class Type extends Base<string> {
       assert(isString(str), "Expected enums to be an array of string"),
     );
 
-    const TYPE = JSON.stringify(enums);
+    const type = JSON.stringify(enums);
 
     return this._pipe(value => ({
       value,
-      errors: !enums.includes(value) ? `Expected to be one of ${TYPE}` : NULL,
+      errors: !enums.includes(value) ? `Expected to be one of ${type}` : NULL,
     }));
   }
 

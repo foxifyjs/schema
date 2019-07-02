@@ -10,6 +10,7 @@ const { isString } = string;
 class Type extends Base<Date | number | string> {
   protected static type = TYPE.DATE;
 
+  // tslint:disable-next-line: no-shadowed-variable
   public min(date: Date | number | string | (() => Date | number | string)) {
     if (isString(date) || isNumber(date)) date = new Date(date);
 
@@ -31,6 +32,7 @@ class Type extends Base<Date | number | string> {
     });
   }
 
+  // tslint:disable-next-line: no-shadowed-variable
   public max(date: Date | number | string | (() => Date | number | string)) {
     if (isString(date) || isNumber(date)) date = new Date(date);
 

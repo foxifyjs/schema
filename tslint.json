@@ -10,6 +10,8 @@
     "variable-name": false,
     "function-name": false,
     "import-name": false,
-    "interface-name": false
+    "interface-name": false,
+    "object-literal-sort-keys": false,
+    "ter-arrow-parens": [true, "as-needed"]
   }
 }
