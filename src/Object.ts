@@ -28,7 +28,7 @@ class Type<
         "Expected obj's values to be object or valid schema type",
       );
 
-      return new Type(value);
+      return new Type(value as any);
     }) as any;
 
     this.details.keys = obj;

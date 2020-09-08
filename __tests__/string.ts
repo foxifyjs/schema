@@ -258,7 +258,7 @@ test("enum", () => {
   const result = Schema.validate(schema, value);
 
   expect(result.errors).toEqual({
-    foo: ['Expected to be one of ["john","doe"]'],
+    foo: ["Expected to be one of [\"john\",\"doe\"]"],
   });
   expect(result.value).toEqual(value);
 });
