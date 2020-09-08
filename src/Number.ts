@@ -8,7 +8,7 @@ class Type extends Base<number> {
   protected static type = TYPE.NUMBER;
 
   public port() {
-    return this._pipe(value => ({
+    return this._pipe((value) => ({
       value,
       errors:
         value < 0 || value > 65535
@@ -18,21 +18,21 @@ class Type extends Base<number> {
   }
 
   public integer() {
-    return this._pipe(value => ({
+    return this._pipe((value) => ({
       value,
       errors: !Number.isInteger(value) ? "Expected to be an integer" : NULL,
     }));
   }
 
   public positive() {
-    return this._pipe(value => ({
+    return this._pipe((value) => ({
       value,
       errors: value < 0 ? "Expected to be a positive number" : NULL,
     }));
   }
 
   public negative() {
-    return this._pipe(value => ({
+    return this._pipe((value) => ({
       value,
       errors: value > 0 ? "Expected to be a negative number" : NULL,
     }));
@@ -41,7 +41,7 @@ class Type extends Base<number> {
   public min(num: number) {
     assert(isNumber(num), "Expected num to be a number");
 
-    return this._pipe(value => ({
+    return this._pipe((value) => ({
       value,
       errors: value < num ? `Expected to be at least ${num}` : NULL,
     }));
@@ -50,7 +50,7 @@ class Type extends Base<number> {
   public max(num: number) {
     assert(isNumber(num), "Expected num to be a number");
 
-    return this._pipe(value => ({
+    return this._pipe((value) => ({
       value,
       errors: value > num ? `Expected to be at most ${num}` : NULL,
     }));
@@ -59,7 +59,7 @@ class Type extends Base<number> {
   public precision(num: number) {
     assert(isNumber(num), "Expected num to be a number");
 
-    return this._pipe(value => ({
+    return this._pipe((value) => ({
       value,
       errors:
         (`${value}`.split(".")[1] || "").length > num
@@ -71,7 +71,7 @@ class Type extends Base<number> {
   public multipliedBy(num: number) {
     assert(isNumber(num) && num >= 0, "Expected num to be a positive number");
 
-    return this._pipe(value => ({
+    return this._pipe((value) => ({
       value,
       errors: value % num !== 0 ? `Expected to be a multiple of ${num}` : NULL,
     }));

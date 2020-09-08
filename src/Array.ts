@@ -1,6 +1,5 @@
 import assert from "assert";
-import Base from "./Any";
-import ObjectType from "./Object";
+import Base, { ValidationResult } from "./Any";
 import { mergeErrors, NULL, number, TYPE } from "./utils";
 
 const { isNumber } = number;
@@ -11,7 +10,7 @@ class Type<T = any, P extends Base = Base> extends Base<T[], { items?: P }> {
   public min(num: number) {
     assert(isNumber(num) && num >= 0, "Expected num to be a positive number");
 
-    return this._pipe(value => ({
+    return this._pipe((value) => ({
       value,
       errors:
         value.length < num
@@ -23,7 +22,7 @@ class Type<T = any, P extends Base = Base> extends Base<T[], { items?: P }> {
   public max(num: number) {
     assert(isNumber(num) && num >= 0, "Expected num to be a positive number");
 
-    return this._pipe(value => ({
+    return this._pipe((value) => ({
       value,
       errors:
         value.length > num
@@ -35,7 +34,7 @@ class Type<T = any, P extends Base = Base> extends Base<T[], { items?: P }> {
   public length(num: number) {
     assert(isNumber(num) && num >= 0, "Expected num to be a positive number");
 
-    return this._pipe(value => ({
+    return this._pipe((value) => ({
       value,
       errors:
         value.length !== num
@@ -52,7 +51,7 @@ class Type<T = any, P extends Base = Base> extends Base<T[], { items?: P }> {
 
     this.details.items = type;
 
-    return this._pipe(value =>
+    return this._pipe((value) =>
       value.reduce(
         (prev, item, index) => {
           const result = type.validate(item);
@@ -67,7 +66,7 @@ class Type<T = any, P extends Base = Base> extends Base<T[], { items?: P }> {
         },
         {
           value: [] as any[],
-          errors: NULL as Base.ValidationResult<T[]>["errors"],
+          errors: NULL as ValidationResult<T[]>["errors"],
         },
       ),
     );

@@ -3,41 +3,42 @@ import { func, mergeErrors, NULL, TYPE } from "./utils";
 
 const { isFunction } = func;
 
-namespace Type {
-  export type Error<T> =
-    | string[]
-    | string
-    | null
-    | (T extends object
-        ? { [key in string | number]: string[] }
-        : T extends any[]
-        ? { [key: string]: string[] }
-        : null);
+export type Error<T> =
+  | string[]
+  | string
+  | null
+  | (T extends Record<string, unknown>
+      ? { [key in string | number]: string[] }
+      : T extends any[]
+      ? { [key: string]: string[] }
+      : null);
 
-  export type PipelineItem<T> = (value: T) => { value: T; errors: Error<T> };
+export type PipelineItem<T> = (value: T) => { value: T; errors: Error<T> };
 
-  export interface ValidationResult<T> {
-    value: T;
-    errors: Error<T>;
-  }
-
-  export interface Options<T> {
-    def: () => T | undefined;
-    required: boolean;
-  }
+export interface ValidationResult<T> {
+  value: T;
+  errors: Error<T>;
 }
 
-abstract class Type<T = any, O extends object = {}> {
+export interface Options<T> {
+  def: () => T | undefined;
+  required: boolean;
+}
+
+export default abstract class Type<
+  T = any,
+  O extends Record<string, unknown> = Record<string, unknown>
+> {
   public static isType = (value: any): value is Type => value instanceof Type;
 
   protected static type: string = TYPE.ANY;
 
-  public details: Type.Options<T> & O = {
+  public details: Options<T> & O = {
     def: () => undefined,
     required: false,
-  } as Type.Options<T> & O;
+  } as Options<T> & O;
 
-  protected _pipeline: Array<Type.PipelineItem<T>> = [];
+  protected _pipeline: Array<PipelineItem<T>> = [];
 
   public default(value: T | (() => T)) {
     if (isFunction(value)) {
@@ -62,7 +63,7 @@ abstract class Type<T = any, O extends object = {}> {
     return this;
   }
 
-  public validate(value: any): Type.ValidationResult<T> {
+  public validate(value: any): ValidationResult<T> {
     const { def, required } = this.details;
 
     if (value == null) {
@@ -93,11 +94,11 @@ abstract class Type<T = any, O extends object = {}> {
 
         return prev;
       },
-      { value, errors: NULL as Type.ValidationResult<T>["errors"] },
+      { value, errors: NULL as ValidationResult<T>["errors"] },
     );
   }
 
-  protected _pipe(...items: Array<Type.PipelineItem<T>>) {
+  protected _pipe(...items: Array<PipelineItem<T>>) {
     this._pipeline = this._pipeline.concat(items);
 
     return this;
@@ -105,5 +106,3 @@ abstract class Type<T = any, O extends object = {}> {
 
   protected abstract _base(value: any): string | null;
 }
-
-export default Type;

@@ -6,9 +6,10 @@ import NumberType from "./Number";
 import ObjectType from "./Object";
 import StringType from "./String";
 
-export function validate<T extends { [key: string]: AnyType } = any>(
+// eslint-disable-next-line @typescript-eslint/ban-types
+export function validate<T extends object = any>(
   schema: T | ObjectType<T>,
-  value: object,
+  value: any,
 ) {
   if (!(schema instanceof ObjectType)) schema = object(schema);
 
@@ -31,6 +32,7 @@ export function number() {
   return new NumberType();
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 export function object<T extends object = object>(obj?: T) {
   return new ObjectType<T>(obj);
 }

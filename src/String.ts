@@ -14,7 +14,7 @@ const ipv6Regex = /(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:)
  * using Luhn Algorithm
  */
 function verifyCreditCard(code: string): boolean {
-  code = code.replace(/\-/g, ""); // just in case
+  code = code.replace(/[- ]/g, ""); // just in case
 
   const luhnArr = [
     [0, 2, 4, 6, 8, 1, 3, 5, 7, 9],
@@ -25,7 +25,7 @@ function verifyCreditCard(code: string): boolean {
     .split("") // spliting digits
     .map((digit: string) => +digit); // parsing digits into number type
 
-  let sum: number = 0;
+  let sum = 0;
 
   digits.map((digit: number, index: number) => {
     // tslint:disable-next-line:no-bitwise
@@ -41,7 +41,7 @@ class Type extends Base<string> {
   /******************** TESTS ********************/
 
   public token() {
-    return this._pipe(value => ({
+    return this._pipe((value) => ({
       value,
       errors: !/^[a-zA-Z0-9_]*$/.test(value)
         ? "Expected to only contain a-z, A-Z, 0-9, and underscore (_)"
@@ -50,7 +50,7 @@ class Type extends Base<string> {
   }
 
   public alphanum() {
-    return this._pipe(value => ({
+    return this._pipe((value) => ({
       value,
       errors: !/^[a-zA-Z0-9]*$/.test(value)
         ? "Expected to only contain a-z, A-Z, 0-9"
@@ -59,7 +59,7 @@ class Type extends Base<string> {
   }
 
   public numeral() {
-    return this._pipe(value => ({
+    return this._pipe((value) => ({
       value,
       errors: !/^[0-9]*$/.test(value)
         ? "Expected to only contain numbers"
@@ -74,31 +74,31 @@ class Type extends Base<string> {
 
     let tester: (value: string) => false | string;
     if (version === 4) {
-      tester = value =>
+      tester = (value) =>
         !ipv4Regex.test(value) && "Expected to be a valid ipv4 address";
     } else if (version === 6) {
-      tester = value =>
+      tester = (value) =>
         !ipv6Regex.test(value) && "Expected to be a valid ipv6 address";
     } else {
-      tester = value =>
+      tester = (value) =>
         !(ipv4Regex.test(value) || ipv6Regex.test(value)) &&
         "Expected to be a valid ip address";
     }
 
-    return this._pipe(value => ({ value, errors: tester(value) || NULL }));
+    return this._pipe((value) => ({ value, errors: tester(value) || NULL }));
   }
 
   public email() {
-    return this._pipe(value => ({
+    return this._pipe((value) => ({
       value,
-      errors: !/^\w[\w\.]+@\w+?\.[a-zA-Z]{2,3}$/.test(value)
+      errors: !/^\w[\w.]+@\w+?\.[a-zA-Z]{2,3}$/.test(value)
         ? "Expected to be a valid email address"
         : NULL,
     }));
   }
 
   public creditCard() {
-    return this._pipe(value => ({
+    return this._pipe((value) => ({
       value,
       errors: !verifyCreditCard(value)
         ? "Expected to be a valid credit-card"
@@ -112,7 +112,7 @@ class Type extends Base<string> {
       "Expected num to be a positive integer",
     );
 
-    return this._pipe(value => ({
+    return this._pipe((value) => ({
       value,
       errors:
         value.length < num
@@ -127,7 +127,7 @@ class Type extends Base<string> {
       "Expected num to be a positive integer",
     );
 
-    return this._pipe(value => ({
+    return this._pipe((value) => ({
       value,
       errors:
         value.length > num
@@ -142,7 +142,7 @@ class Type extends Base<string> {
       "Expected num to be a positive integer",
     );
 
-    return this._pipe(value => ({
+    return this._pipe((value) => ({
       value,
       errors:
         value.length !== num
@@ -154,20 +154,20 @@ class Type extends Base<string> {
   public regex(regex: RegExp) {
     assert(regex instanceof RegExp, "Expected regex to be a valid regex");
 
-    return this._pipe(value => ({
+    return this._pipe((value) => ({
       value,
       errors: !regex.test(value) ? `Expected to match ${regex}` : NULL,
     }));
   }
 
   public enum(enums: string[]) {
-    enums.forEach(str =>
+    enums.forEach((str) =>
       assert(isString(str), "Expected enums to be an array of string"),
     );
 
     const type = JSON.stringify(enums);
 
-    return this._pipe(value => ({
+    return this._pipe((value) => ({
       value,
       errors: !enums.includes(value) ? `Expected to be one of ${type}` : NULL,
     }));
@@ -181,7 +181,7 @@ class Type extends Base<string> {
       "Expected length to be a positive integer",
     );
 
-    return this._pipe(value => ({
+    return this._pipe((value) => ({
       value: truncate(value, length, truncateString),
       errors: NULL,
     }));
@@ -194,7 +194,7 @@ class Type extends Base<string> {
     );
     assert(isString(replacement), "Expected replacement to be an string");
 
-    return this._pipe(value => ({
+    return this._pipe((value) => ({
       value: value.replace(pattern, replacement),
       errors: NULL,
     }));

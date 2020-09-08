@@ -1,13 +1,14 @@
 import assert from "assert";
-import Base from "./Any";
+import Base, { ValidationResult } from "./Any";
 import { mergeErrors, NULL, number, object, TYPE } from "./utils";
 
 const { isNumber } = number;
 const { isObject, keys, mapValues, reduce } = object;
 
 class Type<
+  // eslint-disable-next-line @typescript-eslint/ban-types
   T extends object = object,
-  P extends { [key in string | number]: Base } = {}
+  P extends { [key in string | number]: Base } = any
 > extends Base<T, { keys?: P; unknown: boolean }> {
   protected static type = TYPE.OBJECT;
 
@@ -33,7 +34,7 @@ class Type<
 
     this.details.keys = obj;
 
-    return this._pipe(value =>
+    return this._pipe((value) =>
       reduce(
         obj as P,
         (prev, type, key) => {
@@ -49,7 +50,7 @@ class Type<
         },
         {
           value: this.details.unknown ? value : ({} as any),
-          errors: NULL as Base.ValidationResult<T>["errors"],
+          errors: NULL as ValidationResult<T>["errors"],
         },
       ),
     );
@@ -67,7 +68,7 @@ class Type<
       "Expected num to be a positive integer",
     );
 
-    return this._pipe(value => ({
+    return this._pipe((value) => ({
       value,
       errors:
         keys(value).length < num
@@ -82,7 +83,7 @@ class Type<
       "Expected num to be a positive integer",
     );
 
-    return this._pipe(value => ({
+    return this._pipe((value) => ({
       value,
       errors:
         keys(value).length > num
@@ -97,7 +98,7 @@ class Type<
       "Expected num to be a positive integer",
     );
 
-    return this._pipe(value => ({
+    return this._pipe((value) => ({
       value,
       errors:
         keys(value).length !== num

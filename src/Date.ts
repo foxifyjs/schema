@@ -22,7 +22,7 @@ class Type extends Base<Date | number | string> {
       generator = () => date as Date;
     }
 
-    return this._pipe(value => {
+    return this._pipe((value) => {
       const min = new Date(generator());
 
       return {
@@ -44,7 +44,7 @@ class Type extends Base<Date | number | string> {
       generator = () => date as Date;
     }
 
-    return this._pipe(value => {
+    return this._pipe((value) => {
       const max = new Date(generator());
 
       return {

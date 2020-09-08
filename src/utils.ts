@@ -1,5 +1,5 @@
 import { object, string } from "prototyped.js/es6/methods";
-import Type from "./Any";
+import { ValidationResult } from "./Any";
 
 const { forEach, isPlainObject, reduce } = object;
 const { isString } = string;
@@ -19,8 +19,8 @@ export const enum TYPE {
 }
 
 function reduceErrors<T = any>(
-  errors: Type.ValidationResult<T>["errors"],
-): Type.ValidationResult<T>["errors"] {
+  errors: ValidationResult<T>["errors"],
+): ValidationResult<T>["errors"] {
   return reduce(
     errors as any,
     (prev: any, error: any, key: string) => {
@@ -46,9 +46,9 @@ function reduceErrors<T = any>(
 }
 
 export function mergeErrors<T = any>(
-  prev: Type.ValidationResult<T>["errors"],
-  errors: Type.ValidationResult<T>["errors"],
-): Type.ValidationResult<T>["errors"] {
+  prev: ValidationResult<T>["errors"],
+  errors: ValidationResult<T>["errors"],
+): ValidationResult<T>["errors"] {
   if (errors == null) return prev;
 
   if (isString(errors)) errors = [errors];
