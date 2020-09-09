@@ -1,150 +1,187 @@
-import * as Schema from "../src";
+import Schema, { SchemaError } from "../src";
 
-test("port", () => {
-  const schema = {
-    bar: Schema.number().port(),
-    foo: Schema.number().port(),
-  };
+it("should fail", () => {
+  expect.assertions(2);
 
-  const value = {
-    bar: 80,
-    foo: 100000,
-  };
+  try {
+    Schema.number().validate("some string");
+  } catch (error) {
+    expect(error).toBeInstanceOf(SchemaError);
+    expect(error.details).toEqual("Expected to be a valid number");
+  }
+});
 
-  const result = Schema.validate(schema, value);
+it("should pass", () => {
+  const result = Schema.number().validate(56);
 
-  expect(result.errors).toEqual({
-    foo: ["Expected to be a valid port (0 - 65535)"],
+  expect(result).toEqual(56);
+});
+
+describe(".port", () => {
+  it("should fail", () => {
+    expect.assertions(2);
+
+    try {
+      Schema.number().port().validate(100000);
+    } catch (error) {
+      expect(error).toBeInstanceOf(SchemaError);
+      expect(error.details).toEqual("Expected to be a valid port (0 - 65535)");
+    }
   });
-  expect(result.value).toEqual({ bar: 80, foo: 100000 });
-});
 
-test("integer", () => {
-  const schema = {
-    bar: Schema.number().integer(),
-    foo: Schema.number().integer(),
-  };
+  it("should pass", () => {
+    const result = Schema.number().port().validate(80);
 
-  const value = {
-    bar: 1,
-    foo: 1.5,
-  };
-
-  const result = Schema.validate(schema, value);
-
-  expect(result.errors).toEqual({ foo: ["Expected to be an integer"] });
-  expect(result.value).toEqual({ bar: 1, foo: 1.5 });
-});
-
-test("positive", () => {
-  const schema = {
-    bar: Schema.number().positive(),
-    foo: Schema.number().positive(),
-  };
-
-  const value = {
-    bar: 1,
-    foo: -1,
-  };
-
-  const result = Schema.validate(schema, value);
-
-  expect(result.errors).toEqual({
-    foo: ["Expected to be a positive number"],
+    expect(result).toEqual(80);
   });
-  expect(result.value).toEqual({ bar: 1, foo: -1 });
 });
 
-test("negative", () => {
-  const schema = {
-    bar: Schema.number().negative(),
-    foo: Schema.number().negative(),
-  };
+describe(".integer", () => {
+  it("should fail (integer)", () => {
+    expect.assertions(2);
 
-  const value = {
-    bar: -1,
-    foo: 1,
-  };
-
-  const result = Schema.validate(schema, value);
-
-  expect(result.errors).toEqual({
-    foo: ["Expected to be a negative number"],
+    try {
+      Schema.number().integer().validate(1.5);
+    } catch (error) {
+      expect(error).toBeInstanceOf(SchemaError);
+      expect(error.details).toEqual("Expected to be an integer");
+    }
   });
-  expect(result.value).toEqual({ bar: -1, foo: 1 });
-});
 
-test("min", () => {
-  const schema = {
-    bar: Schema.number().min(1),
-    foo: Schema.number().min(10.4),
-  };
+  it("should fail (floating point)", () => {
+    expect.assertions(2);
 
-  const value = {
-    bar: 1,
-    foo: 5.8,
-  };
-
-  const result = Schema.validate(schema, value);
-
-  expect(result.errors).toEqual({ foo: ["Expected to be at least 10.4"] });
-  expect(result.value).toEqual({ bar: 1, foo: 5.8 });
-});
-
-test("max", () => {
-  const schema = {
-    bar: Schema.number().max(5),
-    foo: Schema.number().max(10.4),
-  };
-
-  const value = {
-    bar: 4.9,
-    foo: 15,
-  };
-
-  const result = Schema.validate(schema, value);
-
-  expect(result.errors).toEqual({ foo: ["Expected to be at most 10.4"] });
-  expect(result.value).toEqual({ bar: 4.9, foo: 15 });
-});
-
-test("precision", () => {
-  const schema = {
-    bar: Schema.number().precision(1),
-    foo: Schema.number().precision(2),
-  };
-
-  const value = {
-    bar: 4,
-    foo: 15.854,
-  };
-
-  const result = Schema.validate(schema, value);
-
-  expect(result.errors).toEqual({
-    foo: ["Expected to have at most 2 decimal places"],
+    try {
+      Schema.number().integer(false).validate(1);
+    } catch (error) {
+      expect(error).toBeInstanceOf(SchemaError);
+      expect(error.details).toEqual("Expected to be a floating point");
+    }
   });
-  expect(result.value).toEqual({ bar: 4, foo: 15.854 });
+
+  it("should pass (integer)", () => {
+    const result = Schema.number().integer().validate(22);
+
+    expect(result).toEqual(22);
+  });
+
+  it("should pass (floating point)", () => {
+    const result = Schema.number().integer(false).validate(22.22);
+
+    expect(result).toEqual(22.22);
+  });
 });
 
-test("multipliedBy", () => {
-  const schema = {
-    bar: Schema.number().multipliedBy(2),
-    foo: Schema.number().multipliedBy(3),
-    something: Schema.number(),
-  };
+describe(".positive", () => {
+  it("should fail (positive)", () => {
+    expect.assertions(2);
 
-  const value = {
-    bar: 4,
-    foo: 15.854,
-    something: "else",
-  };
-
-  const result = Schema.validate(schema, value);
-
-  expect(result.errors).toEqual({
-    foo: ["Expected to be a multiple of 3"],
-    something: ["Expected to be a number"],
+    try {
+      Schema.number().positive().validate(-1);
+    } catch (error) {
+      expect(error).toBeInstanceOf(SchemaError);
+      expect(error.details).toEqual("Expected to be a positive number");
+    }
   });
-  expect(result.value).toEqual({ bar: 4, foo: 15.854, something: "else" });
+
+  it("should fail (negative)", () => {
+    expect.assertions(2);
+
+    try {
+      Schema.number().positive(false).validate(1);
+    } catch (error) {
+      expect(error).toBeInstanceOf(SchemaError);
+      expect(error.details).toEqual("Expected to be a negative number");
+    }
+  });
+
+  it("should pass (integer)", () => {
+    const result = Schema.number().positive().validate(22);
+
+    expect(result).toEqual(22);
+  });
+
+  it("should pass (negative)", () => {
+    const result = Schema.number().positive(false).validate(-22);
+
+    expect(result).toEqual(-22);
+  });
+});
+
+describe(".max", () => {
+  it("should fail", () => {
+    expect.assertions(2);
+
+    try {
+      Schema.number().max(5).validate(10);
+    } catch (error) {
+      expect(error).toBeInstanceOf(SchemaError);
+      expect(error.details).toEqual("Expected to be less than 5");
+    }
+  });
+
+  it("should pass", () => {
+    const result = Schema.number().max(5).validate(4);
+
+    expect(result).toEqual(4);
+  });
+});
+
+describe(".min", () => {
+  it("should fail", () => {
+    expect.assertions(2);
+
+    try {
+      Schema.number().min(5).validate(2);
+    } catch (error) {
+      expect(error).toBeInstanceOf(SchemaError);
+      expect(error.details).toEqual("Expected to be greater than 5");
+    }
+  });
+
+  it("should pass", () => {
+    const result = Schema.number().min(5).validate(6);
+
+    expect(result).toEqual(6);
+  });
+});
+
+describe(".precision", () => {
+  it("should fail", () => {
+    expect.assertions(2);
+
+    try {
+      Schema.number().precision(2).validate(15.854);
+    } catch (error) {
+      expect(error).toBeInstanceOf(SchemaError);
+      expect(error.details).toEqual(
+        "Expected to have at most 2 decimal places",
+      );
+    }
+  });
+
+  it("should pass", () => {
+    const result = Schema.number().precision(2).validate(15.85);
+
+    expect(result).toEqual(15.85);
+  });
+});
+
+describe(".multiple", () => {
+  it("should fail", () => {
+    expect.assertions(2);
+
+    try {
+      Schema.number().multiple(3).validate(15.854);
+    } catch (error) {
+      expect(error).toBeInstanceOf(SchemaError);
+      expect(error.details).toEqual("Expected to be multiple of 3");
+    }
+  });
+
+  it("should pass", () => {
+    const result = Schema.number().multiple(3).validate(15);
+
+    expect(result).toEqual(15);
+  });
 });

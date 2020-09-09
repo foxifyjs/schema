@@ -1,36 +1,27 @@
-import * as Schema from "../src";
+import Schema, { SchemaError } from "../src";
 
-it("should have an error because of the required field", () => {
-  const schema = Schema.object({
-    foo: Schema.boolean().required(),
-  });
+it("should fail when it's required and the value is missing", () => {
+  expect.assertions(2);
 
-  const value = {};
-
-  const result = Schema.validate(schema, value);
-
-  expect(result.errors).toEqual({ foo: ["Expected to be provided"] });
-  expect(result.value).toEqual({});
+  try {
+    Schema.boolean().required().validate();
+  } catch (error) {
+    expect(error).toBeInstanceOf(SchemaError);
+    expect(error.details).toEqual("Expected to have a value");
+  }
 });
 
 it("should set the default value", () => {
-  const schema = {
-    foo: Schema.boolean().default(false),
-  };
+  const result = Schema.boolean().default(false).validate();
 
-  const value = {};
-
-  const result = Schema.validate(schema, value);
-
-  expect(result.errors).toBe(null);
-  expect(result.value).toEqual({ foo: false });
+  expect(result).toBe(false);
 });
 
-test("multiple checks", () => {
+test("multiple validations", () => {
+  expect.assertions(2);
+
   const schema = {
-    bar: Schema.boolean()
-      .default(true)
-      .required(),
+    bar: Schema.boolean().default(true).required(),
     boolean1: Schema.boolean().required(),
     boolean2: Schema.boolean(),
     boolean3: Schema.boolean(),
@@ -42,11 +33,13 @@ test("multiple checks", () => {
     something: "else",
   };
 
-  const result = Schema.validate(schema, value);
-
-  expect(result.errors).toEqual({
-    boolean1: ["Expected to be provided"],
-    boolean3: ["Expected to be a boolean"],
-  });
-  expect(result.value).toEqual({ bar: true, foo: false, boolean3: "hello" });
+  try {
+    Schema.object().keys(schema).validate(value);
+  } catch (error) {
+    expect(error).toBeInstanceOf(SchemaError);
+    expect(error.details).toEqual({
+      boolean1: "Expected boolean1 to have a value",
+      boolean3: "Expected boolean3 to be a boolean",
+    });
+  }
 });

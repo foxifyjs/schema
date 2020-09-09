@@ -7,7 +7,7 @@ TypeScript ready object schema validation
 [![Tested With Jest](https://img.shields.io/badge/tested_with-jest-99424f.svg)](https://github.com/facebook/jest)
 [![Pull Requests](https://img.shields.io/badge/PRs-Welcome-brightgreen.svg)](https://github.com/foxifyjs/schema/pulls)
 [![License](https://img.shields.io/github/license/foxifyjs/schema.svg)](https://github.com/foxifyjs/schema/blob/master/LICENSE)
-[![Build Status](https://api.travis-ci.com/foxifyjs/schema.svg?branch=master)](https://travis-ci.com/foxifyjs/schema)
+[![Build Status](https://github.com/foxifyjs/schema/workflows/Test/badge.svg)](https://github.com/foxifyjs/odin/actions)
 [![Coverage Status](https://codecov.io/gh/foxifyjs/schema/branch/master/graph/badge.svg)](https://codecov.io/gh/foxifyjs/schema)
 [![Package Quality](http://npm.packagequality.com/shield/%40foxify%2Fschema.svg)](http://packagequality.com/#?package=@foxify/schema)
 [![Dependencies Status](https://david-dm.org/foxifyjs/schema.svg)](https://david-dm.org/foxifyjs/schema)
