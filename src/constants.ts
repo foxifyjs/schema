@@ -40,24 +40,19 @@ export type Result<
   SchemaT extends AnyType<Type, InputT>,
   Value
 > = SchemaT["isRequired"] extends true
-  ? ResultRequired<Type, InputT, SchemaT, Value>
-  : Value extends InputT
+  ? ResultRequired<Type, InputT, ParsedValue<Value, DefaultValue<SchemaT>>>
+  : ResultOptional<Type, InputT, ParsedValue<Value, DefaultValue<SchemaT>>>;
+
+export type ResultRequired<Type, InputT, Value> = Value extends InputT
   ? Type
-  : Value extends null | undefined
-  ? DefaultValue<SchemaT> extends InputT
-    ? Type
-    : null
   : never;
 
-export type ResultRequired<
-  Type,
-  InputT,
-  SchemaT extends AnyType<Type, InputT>,
-  Value
-> = Value extends InputT
+export type ResultOptional<Type, InputT, Value> = Value extends InputT
   ? Type
   : Value extends null | undefined
-  ? DefaultValue<SchemaT> extends InputT
-    ? Type
-    : never
+  ? null
   : never;
+
+export type ParsedValue<Value, Default> = Value extends null | undefined
+  ? Default
+  : Value;
