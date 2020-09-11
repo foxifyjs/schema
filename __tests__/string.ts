@@ -1,6 +1,8 @@
-import * as Schema from "../src";
+import Schema, { SchemaError } from "../src";
 
-test("token", () => {
+test(".token", () => {
+  expect.assertions(2);
+
   const schema = {
     bar: Schema.string().token(),
     foo: Schema.string().token(),
@@ -11,15 +13,19 @@ test("token", () => {
     foo: "$asdasf498_",
   };
 
-  const result = Schema.validate(schema, value);
-
-  expect(result.errors).toEqual({
-    foo: ["Expected to only contain a-z, A-Z, 0-9, and underscore (_)"],
-  });
-  expect(result.value).toEqual({ bar: "dfsASDdf43_", foo: "$asdasf498_" });
+  try {
+    Schema.object().keys(schema).validate(value);
+  } catch (error) {
+    expect(error).toBeInstanceOf(SchemaError);
+    expect(error.details).toEqual({
+      foo: "Expected foo to only contain a-z, A-Z, 0-9, underscore (_)",
+    });
+  }
 });
 
-test("alphanum", () => {
+test(".alphanum", () => {
+  expect.assertions(2);
+
   const schema = {
     bar: Schema.string().alphanum(),
     foo: Schema.string().alphanum(),
@@ -30,15 +36,19 @@ test("alphanum", () => {
     foo: "$asdasf498_",
   };
 
-  const result = Schema.validate(schema, value);
-
-  expect(result.errors).toEqual({
-    foo: ["Expected to only contain a-z, A-Z, 0-9"],
-  });
-  expect(result.value).toEqual({ bar: "dfsdf43ASAD", foo: "$asdasf498_" });
+  try {
+    Schema.object().keys(schema).validate(value);
+  } catch (error) {
+    expect(error).toBeInstanceOf(SchemaError);
+    expect(error.details).toEqual({
+      foo: "Expected foo to only contain a-z, A-Z, 0-9",
+    });
+  }
 });
 
-test("numeral", () => {
+test(".numeral", () => {
+  expect.assertions(2);
+
   const schema = {
     bar: Schema.string().numeral(),
     foo: Schema.string().numeral(),
@@ -49,15 +59,19 @@ test("numeral", () => {
     foo: "$asdasf498_",
   };
 
-  const result = Schema.validate(schema, value);
-
-  expect(result.errors).toEqual({
-    foo: ["Expected to only contain numbers"],
-  });
-  expect(result.value).toEqual({ bar: "65464", foo: "$asdasf498_" });
+  try {
+    Schema.object().keys(schema).validate(value);
+  } catch (error) {
+    expect(error).toBeInstanceOf(SchemaError);
+    expect(error.details).toEqual({
+      foo: "Expected foo to only contain numbers",
+    });
+  }
 });
 
-test("ip", () => {
+test(".ip", () => {
+  expect.assertions(2);
+
   const schema = {
     foo: Schema.string().ip(),
     googleIpv4: Schema.string().ip(),
@@ -70,19 +84,19 @@ test("ip", () => {
     googleIpv6: "2a00:1450:4001:816::200e",
   };
 
-  const result = Schema.validate(schema, value);
-
-  expect(result.errors).toEqual({
-    foo: ["Expected to be a valid ip address"],
-  });
-  expect(result.value).toEqual({
-    foo: "$asdasf498_",
-    googleIpv4: "172.217.16.142",
-    googleIpv6: "2a00:1450:4001:816::200e",
-  });
+  try {
+    Schema.object().keys(schema).validate(value);
+  } catch (error) {
+    expect(error).toBeInstanceOf(SchemaError);
+    expect(error.details).toEqual({
+      foo: "Expected foo to be a valid ip address",
+    });
+  }
 });
 
-test("ipv4", () => {
+test(".ip(4)", () => {
+  expect.assertions(2);
+
   const schema = {
     foo: Schema.string().ip(4),
     google: Schema.string().ip(4),
@@ -93,18 +107,19 @@ test("ipv4", () => {
     google: "172.217.16.142",
   };
 
-  const result = Schema.validate(schema, value);
-
-  expect(result.errors).toEqual({
-    foo: ["Expected to be a valid ipv4 address"],
-  });
-  expect(result.value).toEqual({
-    foo: "2a00:1450:4001:816::200e",
-    google: "172.217.16.142",
-  });
+  try {
+    Schema.object().keys(schema).validate(value);
+  } catch (error) {
+    expect(error).toBeInstanceOf(SchemaError);
+    expect(error.details).toEqual({
+      foo: "Expected foo to be a valid ipv4 address",
+    });
+  }
 });
 
-test("ipv6", () => {
+test(".ip(6)", () => {
+  expect.assertions(2);
+
   const schema = {
     foo: Schema.string().ip(6),
     google: Schema.string().ip(6),
@@ -115,18 +130,19 @@ test("ipv6", () => {
     google: "2a00:1450:4001:816::200e",
   };
 
-  const result = Schema.validate(schema, value);
-
-  expect(result.errors).toEqual({
-    foo: ["Expected to be a valid ipv6 address"],
-  });
-  expect(result.value).toEqual({
-    foo: "172.217.16.142",
-    google: "2a00:1450:4001:816::200e",
-  });
+  try {
+    Schema.object().keys(schema).validate(value);
+  } catch (error) {
+    expect(error).toBeInstanceOf(SchemaError);
+    expect(error.details).toEqual({
+      foo: "Expected foo to be a valid ipv6 address",
+    });
+  }
 });
 
-test("email", () => {
+test(".email", () => {
+  expect.assertions(2);
+
   const schema = {
     bar: Schema.string().email(),
     foo: Schema.string().email(),
@@ -137,18 +153,19 @@ test("email", () => {
     foo: "gmail.com",
   };
 
-  const result = Schema.validate(schema, value);
-
-  expect(result.errors).toEqual({
-    foo: ["Expected to be a valid email address"],
-  });
-  expect(result.value).toEqual({
-    bar: "ardalanamini22@gmail.com",
-    foo: "gmail.com",
-  });
+  try {
+    Schema.object().keys(schema).validate(value);
+  } catch (error) {
+    expect(error).toBeInstanceOf(SchemaError);
+    expect(error.details).toEqual({
+      foo: "Expected foo to be a valid email address",
+    });
+  }
 });
 
-test("creditCard", () => {
+test(".creditCard", () => {
+  expect.assertions(2);
+
   const schema = {
     bar: Schema.string().creditCard(),
     foo: Schema.string().creditCard(),
@@ -159,18 +176,19 @@ test("creditCard", () => {
     foo: "2342-3423-4234-2342",
   };
 
-  const result = Schema.validate(schema, value);
-
-  expect(result.errors).toEqual({
-    foo: ["Expected to be a valid credit-card"],
-  });
-  expect(result.value).toEqual({
-    bar: "1111-2222-3333-4444",
-    foo: "2342-3423-4234-2342",
-  });
+  try {
+    Schema.object().keys(schema).validate(value);
+  } catch (error) {
+    expect(error).toBeInstanceOf(SchemaError);
+    expect(error.details).toEqual({
+      foo: "Expected foo to be a valid credit-card",
+    });
+  }
 });
 
-test("min", () => {
+test(".min", () => {
+  expect.assertions(2);
+
   const schema = {
     bar: Schema.string().min(3),
     foo: Schema.string().min(5),
@@ -181,15 +199,19 @@ test("min", () => {
     foo: "abcd",
   };
 
-  const result = Schema.validate(schema, value);
-
-  expect(result.errors).toEqual({
-    foo: ["Expected to have at least 5 character(s)"],
-  });
-  expect(result.value).toEqual(value);
+  try {
+    Schema.object().keys(schema).validate(value);
+  } catch (error) {
+    expect(error).toBeInstanceOf(SchemaError);
+    expect(error.details).toEqual({
+      foo: "Expected foo to contain at least 5 character(s)",
+    });
+  }
 });
 
-test("max", () => {
+test(".max", () => {
+  expect.assertions(2);
+
   const schema = {
     bar: Schema.string().max(3),
     foo: Schema.string().max(5),
@@ -200,15 +222,19 @@ test("max", () => {
     foo: "abcdef",
   };
 
-  const result = Schema.validate(schema, value);
-
-  expect(result.errors).toEqual({
-    foo: ["Expected to have at most 5 character(s)"],
-  });
-  expect(result.value).toEqual(value);
+  try {
+    Schema.object().keys(schema).validate(value);
+  } catch (error) {
+    expect(error).toBeInstanceOf(SchemaError);
+    expect(error.details).toEqual({
+      foo: "Expected foo to contain at most 5 character(s)",
+    });
+  }
 });
 
-test("length", () => {
+test(".length", () => {
+  expect.assertions(2);
+
   const schema = {
     bar: Schema.string().length(3),
     foo: Schema.string().length(5),
@@ -219,15 +245,19 @@ test("length", () => {
     foo: "abcdef",
   };
 
-  const result = Schema.validate(schema, value);
-
-  expect(result.errors).toEqual({
-    foo: ["Expected to have exactly 5 character(s)"],
-  });
-  expect(result.value).toEqual(value);
+  try {
+    Schema.object().keys(schema).validate(value);
+  } catch (error) {
+    expect(error).toBeInstanceOf(SchemaError);
+    expect(error.details).toEqual({
+      foo: "Expected foo to contain exactly 5 character(s)",
+    });
+  }
 });
 
-test("regex", () => {
+test(".regex", () => {
+  expect.assertions(2);
+
   const schema = {
     bar: Schema.string().regex(/.*/),
     foo: Schema.string().regex(/\d/),
@@ -238,13 +268,19 @@ test("regex", () => {
     foo: "abcdef",
   };
 
-  const result = Schema.validate(schema, value);
-
-  expect(result.errors).toEqual({ foo: ["Expected to match /\\d/"] });
-  expect(result.value).toEqual(value);
+  try {
+    Schema.object().keys(schema).validate(value);
+  } catch (error) {
+    expect(error).toBeInstanceOf(SchemaError);
+    expect(error.details).toEqual({
+      foo: "Expected foo to match /\\d/",
+    });
+  }
 });
 
-test("enum", () => {
+test(".enum", () => {
+  expect.assertions(2);
+
   const schema = {
     bar: Schema.string().enum(["john", "doe"]),
     foo: Schema.string().enum(["john", "doe"]),
@@ -255,44 +291,12 @@ test("enum", () => {
     foo: "something else",
   };
 
-  const result = Schema.validate(schema, value);
-
-  expect(result.errors).toEqual({
-    foo: ["Expected to be one of [\"john\",\"doe\"]"],
-  });
-  expect(result.value).toEqual(value);
-});
-
-test("truncate", () => {
-  const schema = {
-    bar: Schema.string().truncate(7),
-    foo: Schema.string().truncate(7),
-  };
-
-  const value = {
-    bar: "john",
-    foo: "something",
-  };
-
-  const result = Schema.validate(schema, value);
-
-  expect(result.errors).toBe(null);
-  expect(result.value).toEqual({ bar: "john", foo: "some..." });
-});
-
-test("replace", () => {
-  const schema = {
-    bar: Schema.string().replace("john", "hello"),
-    foo: Schema.string().replace(/something else/, "world"),
-  };
-
-  const value = {
-    bar: "john",
-    foo: "something",
-  };
-
-  const result = Schema.validate(schema, value);
-
-  expect(result.errors).toBe(null);
-  expect(result.value).toEqual({ bar: "hello", foo: "something" });
+  try {
+    Schema.object().keys(schema).validate(value);
+  } catch (error) {
+    expect(error).toBeInstanceOf(SchemaError);
+    expect(error.details).toEqual({
+      foo: 'Expected foo to be one of ["john","doe"]',
+    });
+  }
 });

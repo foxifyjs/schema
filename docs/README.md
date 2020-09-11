@@ -18,8 +18,8 @@ TypeScript ready object schema validation
     - [`.min(date: Date)`](#mindate-Date)
     - [`.max(date: number)`](#maxdate-number)
   - [Number](#Number)
-    - [`.integer()`](#integer)
-    - [`.positive()`](#positive)
+    - [`.integer(integer?: boolean)`](#integer)
+    - [`.positive(positive?: boolean)`](#positive)
     - [`.negative()`](#negative)
     - [`.min(num: number)`](#minnum-number)
     - [`.max(num: number)`](#maxnum-number)
@@ -27,7 +27,6 @@ TypeScript ready object schema validation
     - [`.multipliedBy(num: number)`](#multipliedBynum-number)
   - [Object](#Object)
     - [`object(obj: object)`](#objectobj-object)
-    - [`unknown()`](#unknown)
     - [`min(n: number)`](#minn-number)
     - [`max(n: number)`](#maxn-number)
     - [`length(n: number)`](#lengthn-number)
@@ -43,8 +42,6 @@ TypeScript ready object schema validation
     - [`.length(num: number)`](#lengthnum-number)
     - [`.regex(regex: RegExp)`](#regexregex-RegExp)
     - [`.enum(enum: string[])`](#enumenum-string)
-    - [`.truncate(length: number, truncateString: string = ".")`](#truncatelength-number-truncateString-string--%22%22)
-    - [`.replace(pattern: string | RegExp, replacement: string)`](#replacepattern-string--RegExp-replacement-string)
 - [Validation](#Validation)
 
 ### Schema Definition
@@ -281,24 +278,6 @@ const schema = {
 };
 ```
 
-##### `unknown()`
-
-Determines that the unknown keys should be included in the resulted object too (without any validation of course)
-
-```typescript
-const schema = {
-  foo: Schema.object({ bar: Schema.number() }).unknown(),
-};
-```
-
-Please note that it won't be necessary if you're not specifying the object keys like the example below:
-
-```typescript
-const schema = {
-  foo: Schema.object(),
-};
-```
-
 ##### `min(n: number)`
 
 Insures that the given object has at least `n` key(s)
@@ -451,51 +430,10 @@ const schema = {
 };
 ```
 
-##### `.truncate(length: number, truncateString: string = ".")`
-
-Converts the given string to a truncated string with the given `length` and the `truncateString`
-
-```typescript
-const schema = {
-  foo: Schema.string().truncate(8, "*"),
-};
-```
-
-##### `.replace(pattern: string | RegExp, replacement: string)`
-
-Replaces everything that matches `pattern` in the given string with the given `replacement`
-
-```typescript
-const schema = {
-  foo: Schema.string().replace("Hello!", "Hello World!"),
-};
-```
-
 ### Validation
 
 Validates the given value according to the given schema
 
 ```typescript
-const result = Schema.validate(schema, value);
-/*
- * interface {
- *   errors: { [path to the wrong value]: Array<error string> } | null,
- *   value: object,
- * }
- */
-```
-
-You can also validate any schema type directly like the example below
-
-```typescript
-const result = Schema.number()
-  .min(22)
-  .required()
-  .validate(value);
-/*
- * interface {
- *   errors: { [path to the wrong value]: Array<error string> } | null,
- *   value: number,
- * }
- */
+const result = schema.validate(value);
 ```
