@@ -37,8 +37,8 @@ export default class StringType extends AnyType<string> {
 
       this.fail(
         label == null
-          ? "Expected to to be a valid email address"
-          : `Expected ${label} to to be a valid email address`,
+          ? "Expected to be a valid email address"
+          : `Expected ${label} to be a valid email address`,
       );
     });
   }
@@ -109,8 +109,8 @@ export default class StringType extends AnyType<string> {
 
       this.fail(
         label == null
-          ? `Expected to contain at most ${length} character(s)`
-          : `Expected ${label} to contain at most ${length} character(s)`,
+          ? `Expected to contain exactly ${length} character(s)`
+          : `Expected ${label} to contain exactly ${length} character(s)`,
       );
     });
   }
@@ -123,8 +123,8 @@ export default class StringType extends AnyType<string> {
 
       this.fail(
         label == null
-          ? `Expected to contain exactly ${max} character(s)`
-          : `Expected ${label} to contain exactly ${max} character(s)`,
+          ? `Expected to contain at most ${max} character(s)`
+          : `Expected ${label} to contain at most ${max} character(s)`,
       );
     });
   }
@@ -145,7 +145,7 @@ export default class StringType extends AnyType<string> {
 
   public numeral(): this {
     return this.pipe((value) => {
-      if (/^\d$/.test(value)) return value;
+      if (/^\d*$/.test(value)) return value;
 
       const label = this._label;
 
@@ -179,8 +179,8 @@ export default class StringType extends AnyType<string> {
 
       this.fail(
         label == null
-          ? "Expected to only contain a-z, A-Z, 0-9, underline"
-          : `Expected ${label} to only contain a-z, A-Z, 0-9, underline`,
+          ? "Expected to only contain a-z, A-Z, 0-9, underscore (_)"
+          : `Expected ${label} to only contain a-z, A-Z, 0-9, underscore (_)`,
       );
     });
   }
