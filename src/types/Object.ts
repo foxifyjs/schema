@@ -1,9 +1,11 @@
 import AnyType from "./Any";
+import { DefaultValue } from "../constants";
 import SchemaError, { ErrorDetails } from "../Error";
 
 export default class ObjectType<
-  T extends Record<string, unknown>
-> extends AnyType<T> {
+  T extends Record<string, unknown>,
+  I = T
+> extends AnyType<T, I> {
   public length(length: number): this {
     return this.pipe((value) => {
       if (Object.keys(value).length === length) return value;
@@ -105,11 +107,37 @@ export type KeysType<T extends Record<string, unknown>> = T extends Record<
 export type KeysResult<
   T extends Record<string, unknown>,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  K extends Keys<Record<string, any>>
+  K extends Keys<T>
 > = T extends Record<string, unknown>
   ? Record<string, unknown> extends T
     ? K extends Keys<infer U>
-      ? ObjectType<U>
+      ? ObjectType<U, Input<U, K>>
       : ObjectType<T>
     : ObjectType<T>
   : ObjectType<T>;
+
+type Input<
+  Value extends Record<string, unknown>,
+  Schema extends Keys<Value>
+> = Partial<InputNullable<Value, Schema>> &
+  Pick<
+    InputNullable<Value, Schema>,
+    {
+      [Key in keyof Value]: DefaultValue<Schema[Key]> extends null
+        ? Schema[Key]["isRequired"] extends true
+          ? Key
+          : never
+        : never;
+    }[keyof Value]
+  >;
+
+type InputNullable<
+  Value extends Record<string, unknown>,
+  Schema extends Keys<Value>
+> = {
+  [Key in keyof Value]: DefaultValue<Schema[Key]> extends null
+    ? Schema[Key]["isRequired"] extends true
+      ? Value[Key]
+      : Value[Key] | null | undefined
+    : Value[Key] | null | undefined;
+};
