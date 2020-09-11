@@ -31,39 +31,29 @@ it("should cast default value (string) to date", () => {
   expect(result).toEqual(new Date(date));
 });
 
-// it("should convert default value returning number to date", () => {
-//   let now;
-//
-//   const schema = {
-//     foo: Schema.date().default(() => {
-//       now = Date.now();
-//
-//       return now;
-//     }),
-//   };
-//
-//   const value = {};
-//
-//   const result = Schema.validate(schema, value);
-//
-//   expect(result.errors).toBe(null);
-//   expect(result.value).toEqual({ foo: new Date(now as any) });
-// });
+it("should convert default value returning number to date", () => {
+  let date!: number;
 
-// it("should convert default value returning string to date", () => {
-//   const date = "2018-12-26";
-//
-//   const schema = {
-//     foo: Schema.date().default(() => date),
-//   };
-//
-//   const value = {};
-//
-//   const result = Schema.validate(schema, value);
-//
-//   expect(result.errors).toBe(null);
-//   expect(result.value).toEqual({ foo: new Date(date) });
-// });
+  const result = Schema.date()
+    .default(() => {
+      date = Date.now();
+
+      return date;
+    })
+    .validate();
+
+  expect(result).toEqual(new Date(date));
+});
+
+it("should convert default value returning string to date", () => {
+  const date = "2018-12-26";
+
+  const result = Schema.date()
+    .default(() => date)
+    .validate();
+
+  expect(result).toEqual(new Date(date));
+});
 
 it("should convert number to date", () => {
   const now = Date.now();

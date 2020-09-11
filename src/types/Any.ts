@@ -51,7 +51,7 @@ export default abstract class AnyType<T, I = T> {
   }
 
   public validate<V = DefaultValue<this>>(
-    value: V = this.getDefault as never,
+    value: V = this.getDefault() as never,
   ): Result<T, I, this, V> {
     if (value == null) {
       if (this.isRequired) {
