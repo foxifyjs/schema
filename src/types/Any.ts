@@ -1,3 +1,11 @@
+import {
+  Validator,
+  DefaultType,
+  DefaultValue,
+  WithDefault,
+  WithRequired,
+  Result,
+} from "../constants";
 import SchemaError, { ErrorDetails } from "../Error";
 
 export default abstract class AnyType<T, I = T> {
@@ -5,7 +13,7 @@ export default abstract class AnyType<T, I = T> {
 
   protected _label?: string;
 
-  public defaultValue: I | null = null;
+  public getDefault: DefaultType<I> = () => null;
 
   public isRequired = false;
 
@@ -25,22 +33,25 @@ export default abstract class AnyType<T, I = T> {
     return this;
   }
 
-  public default<V extends I>(value: V): ThisWithDefault<T, I, this, V> {
-    this.defaultValue = value;
+  public default<V extends I>(
+    value: V | (() => V),
+  ): WithDefault<this, () => V> {
+    if (typeof value === "function") this.getDefault = value as () => V;
+    else this.getDefault = () => value;
 
-    return this as ThisWithDefault<T, I, this, V>;
+    return this as WithDefault<this, () => V>;
   }
 
   public required<R extends boolean = true>(
     required: R = true as R,
-  ): ThisWithRequired<T, I, this, R> {
+  ): WithRequired<this, R> {
     this.isRequired = required;
 
-    return this as ThisWithRequired<T, I, this, R>;
+    return this as WithRequired<this, R>;
   }
 
-  public validate<V = this["defaultValue"]>(
-    value: V = this.defaultValue as never,
+  public validate<V = DefaultValue<this>>(
+    value: V = this.getDefault as never,
   ): Result<T, I, this, V> {
     if (value == null) {
       if (this.isRequired) {
@@ -68,37 +79,3 @@ export default abstract class AnyType<T, I = T> {
 
   protected abstract initialValidator(value: unknown): T;
 }
-
-export type Validator<T> = (value: T) => T;
-
-export type ThisWithDefault<T, I, A extends AnyType<T, I>, V extends I> = A & {
-  defaultValue: V;
-};
-
-export type ThisWithRequired<
-  T,
-  I,
-  A extends AnyType<T, I>,
-  R extends boolean
-> = A & {
-  isRequired: R;
-};
-
-export type Result<
-  T,
-  I,
-  A extends AnyType<T, I>,
-  V
-> = A["isRequired"] extends true
-  ? A["defaultValue"] extends I
-    ? T
-    : V extends null | undefined
-    ? never
-    : V extends I
-    ? T
-    : never
-  : V extends I
-  ? T
-  : V extends null | undefined
-  ? null
-  : never;

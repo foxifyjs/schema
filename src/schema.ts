@@ -6,27 +6,28 @@ import {
   ObjectType,
   StringType,
 } from "./types";
+import { SchemaType } from "./constants";
 
 const SCHEMA = {
-  array<T = unknown>(): ArrayType<T> {
-    return new ArrayType<T>();
+  array<T = unknown>(): SchemaType<ArrayType<T>> {
+    return new ArrayType<T>() as SchemaType<ArrayType<T>>;
   },
-  boolean(): BooleanType {
-    return new BooleanType();
+  boolean(): SchemaType<BooleanType> {
+    return new BooleanType() as SchemaType<BooleanType>;
   },
-  date(): DateType {
-    return new DateType();
+  date(): SchemaType<DateType> {
+    return new DateType() as SchemaType<DateType>;
   },
-  number(): NumberType {
-    return new NumberType();
+  number(): SchemaType<NumberType> {
+    return new NumberType() as SchemaType<NumberType>;
   },
   object<
     T extends Record<string, unknown> = Record<string, unknown>
-  >(): ObjectType<T> {
-    return new ObjectType<T>();
+  >(): SchemaType<ObjectType<T>> {
+    return new ObjectType<T>() as SchemaType<ObjectType<T>>;
   },
-  string(): StringType {
-    return new StringType();
+  string(): SchemaType<StringType> {
+    return new StringType() as SchemaType<StringType>;
   },
 };
 

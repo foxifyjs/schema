@@ -1,7 +1,7 @@
 import AnyType from "./Any";
 
-export default class DateType extends AnyType<Date, PossibleDate> {
-  public max(max: PossibleDate | (() => PossibleDate)): this {
+export default class DateType extends AnyType<Date, DateInputType> {
+  public max(max: DateInputType | (() => DateInputType)): this {
     const getMax = getDate(max);
 
     return this.pipe((value) => {
@@ -19,7 +19,7 @@ export default class DateType extends AnyType<Date, PossibleDate> {
     });
   }
 
-  public min(min: PossibleDate | (() => PossibleDate)): this {
+  public min(min: DateInputType | (() => DateInputType)): this {
     const getMin = getDate(min);
 
     return this.pipe((value) => {
@@ -54,7 +54,7 @@ export default class DateType extends AnyType<Date, PossibleDate> {
   }
 }
 
-function getDate(value: PossibleDate | (() => PossibleDate)): () => Date {
+function getDate(value: DateInputType | (() => DateInputType)): () => Date {
   if (typeof value === "string" || typeof value === "number") {
     const date = new Date(value);
 
@@ -75,4 +75,4 @@ function getDate(value: PossibleDate | (() => PossibleDate)): () => Date {
   return () => value;
 }
 
-export type PossibleDate = Date | string | number;
+export type DateInputType = Date | string | number;
