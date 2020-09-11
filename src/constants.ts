@@ -36,15 +36,15 @@ export type Result<
   : V extends I
   ? T
   : V extends null | undefined
-  ? null
+  ? DefaultValue<A> extends I
+    ? T
+    : null
   : never;
 
-export type ResultRequired<T, I, A extends AnyType<T, I>, V> = DefaultValue<
-  A
-> extends I
+export type ResultRequired<T, I, A extends AnyType<T, I>, V> = V extends I
   ? T
   : V extends null | undefined
-  ? never
-  : V extends I
-  ? T
+  ? DefaultValue<A> extends I
+    ? T
+    : never
   : never;
