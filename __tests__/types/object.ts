@@ -1,4 +1,4 @@
-import Schema, { SchemaError } from "../src";
+import Schema, { SchemaError } from "../../src";
 
 test(".keys", () => {
   const keys = {

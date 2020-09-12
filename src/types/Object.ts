@@ -3,7 +3,7 @@ import { MessageTemplate, Messages, DefaultValue } from "../constants";
 import SchemaError, { ErrorDetails } from "../Error";
 
 export default class ObjectType<
-  T extends Record<string, unknown>,
+  T extends Record<string, unknown> = Record<string, unknown>,
   I = T
 > extends AnyType<T, I, Template> {
   public get messages(): Messages<Template> {

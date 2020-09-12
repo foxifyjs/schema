@@ -2,7 +2,11 @@ import AnyType from "./Any";
 import { MessageTemplate, Messages } from "../constants";
 import SchemaError, { ErrorDetails } from "../Error";
 
-export default class ArrayType<T> extends AnyType<T[], T[], Template> {
+export default class ArrayType<T = unknown> extends AnyType<
+  T[],
+  T[],
+  Template
+> {
   public get messages(): Messages<Template> {
     return {
       ...super.messages,

@@ -6,28 +6,30 @@ import {
   ObjectType,
   StringType,
 } from "./types";
-import { SchemaType } from "./constants";
+import { Schema } from "./constants";
 
-const SCHEMA = {
-  array<T = unknown>(): SchemaType<ArrayType<T>> {
-    return new ArrayType<T>() as SchemaType<ArrayType<T>>;
+const SCHEMA: Schema = {
+  array() {
+    return new ArrayType() as never;
   },
-  boolean(): SchemaType<BooleanType> {
-    return new BooleanType() as SchemaType<BooleanType>;
+  boolean() {
+    return new BooleanType() as never;
   },
-  date(): SchemaType<DateType> {
-    return new DateType() as SchemaType<DateType>;
+  date() {
+    return new DateType() as never;
   },
-  number(): SchemaType<NumberType> {
-    return new NumberType() as SchemaType<NumberType>;
+  number() {
+    return new NumberType() as never;
   },
-  object<
-    T extends Record<string, unknown> = Record<string, unknown>
-  >(): SchemaType<ObjectType<T>> {
-    return new ObjectType<T>() as SchemaType<ObjectType<T>>;
+  object() {
+    return new ObjectType() as never;
   },
-  string(): SchemaType<StringType> {
-    return new StringType() as SchemaType<StringType>;
+  string() {
+    return new StringType() as never;
+  },
+
+  extend(name, type) {
+    return Object.assign(SCHEMA, { [name]: type }) as never;
   },
 };
 

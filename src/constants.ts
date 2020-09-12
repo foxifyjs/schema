@@ -1,4 +1,12 @@
-import type { AnyType } from "./types";
+import type {
+  AnyType,
+  ArrayType,
+  BooleanType,
+  DateType,
+  NumberType,
+  ObjectType,
+  StringType,
+} from "./types";
 
 /* ------------------------- Messages ------------------------- */
 
@@ -46,12 +54,6 @@ export type WithRequired<
   isRequired: Required;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type SchemaType<SchemaT extends AnyType<any, any, any>> = WithDefault<
-  SchemaT,
-  () => null
->;
-
 export type Result<
   Type,
   InputT,
@@ -75,3 +77,38 @@ export type ResultOptional<Type, InputT, Value> = Value extends InputT
 export type ParsedValue<Value, Default> = Value extends null | undefined
   ? Default
   : Value;
+
+/* ------------------------- Schema ------------------------- */
+
+export interface Schema {
+  array<T = unknown>(): SchemaType<ArrayType<T>>;
+
+  boolean(): SchemaType<BooleanType>;
+
+  date(): SchemaType<DateType>;
+
+  number(): SchemaType<NumberType>;
+
+  object<
+    T extends Record<string, unknown> = Record<string, unknown>
+  >(): SchemaType<ObjectType<T>>;
+
+  string(): SchemaType<StringType>;
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  extend<Name extends string, Type extends () => AnyType<any, any, any>>(
+    name: Name,
+    type: Type,
+  ): this & { [Key in Name]: () => SchemaType<SchemaReturn<Type>> };
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type SchemaType<SchemaT extends AnyType<any, any, any>> = WithDefault<
+  SchemaT,
+  () => null
+>;
+
+export type SchemaReturn<
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  Fn extends () => AnyType<any, any, any>
+> = Fn extends () => infer Type ? Type : never;

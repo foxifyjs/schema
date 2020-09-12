@@ -1,4 +1,4 @@
-import Schema, { SchemaError } from "../src";
+import Schema, { SchemaError } from "../../src";
 
 it("should fail when it's required and the value is missing", () => {
   expect.assertions(2);

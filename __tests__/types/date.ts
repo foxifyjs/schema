@@ -1,4 +1,4 @@
-import Schema, { SchemaError } from "../src";
+import Schema, { SchemaError } from "../../src";
 
 function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
