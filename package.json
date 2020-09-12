@@ -34,10 +34,12 @@
     "number",
     "port",
     "integer",
+    "float",
     "positive",
     "negative",
     "precision",
-    "multipliedBy",
+    "multiple",
+    "multiplied",
     "object",
     "keys",
     "unknown",
@@ -53,9 +55,8 @@
     "card",
     "credit-card",
     "regex",
-    "enum",
-    "truncate",
-    "replace"
+    "pattern",
+    "enum"
   ],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -73,9 +74,6 @@
     "test": "jest",
     "coverage": "npm test -- --coverage"
   },
-  "peerDependencies": {
-    "prototyped.js": "^1.0.1"
-  },
   "devDependencies": {
     "@types/jest": "^26.0.13",
     "@types/node": "^14.6.4",
@@ -85,7 +83,6 @@
     "eslint": "^7.8.1",
     "jest": "^26.4.2",
     "prettier": "^2.1.1",
-    "prototyped.js": "^1.0.1",
     "ts-jest": "^26.3.0",
     "typescript": "^4.0.2"
   }
