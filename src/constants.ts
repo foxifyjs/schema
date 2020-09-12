@@ -1,19 +1,37 @@
 import type { AnyType } from "./types";
 
+/* ------------------------- Messages ------------------------- */
+
+export interface MessageTemplate {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [name: string]: (params: any) => string;
+}
+
+export type Messages<MT extends MessageTemplate> = {
+  [Key in keyof MT]: string;
+} & {
+  required: string;
+};
+
+export type MessageArgs<
+  T extends (params: Record<string, unknown>) => string
+> = T extends (params: infer U) => string ? U : never;
+
 /* ------------------------- Any ------------------------- */
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Validator<Type> = (value: Type) => Type;
 
 export type DefaultType<Type> = () => Type | null;
 
 export type DefaultValue<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  SchemaT extends AnyType<any, any>
+  SchemaT extends AnyType<any, any, any>
 > = SchemaT["getDefault"] extends () => infer ReturnT ? ReturnT : never;
 
 export type WithDefault<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  SchemaT extends AnyType<any, any>,
+  SchemaT extends AnyType<any, any, any>,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Default extends DefaultType<any>
 > = SchemaT & {
@@ -22,14 +40,14 @@ export type WithDefault<
 
 export type WithRequired<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  SchemaT extends AnyType<any, any>,
+  SchemaT extends AnyType<any, any, any>,
   Required extends boolean
 > = SchemaT & {
   isRequired: Required;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type SchemaType<SchemaT extends AnyType<any, any>> = WithDefault<
+export type SchemaType<SchemaT extends AnyType<any, any, any>> = WithDefault<
   SchemaT,
   () => null
 >;
@@ -37,7 +55,8 @@ export type SchemaType<SchemaT extends AnyType<any, any>> = WithDefault<
 export type Result<
   Type,
   InputT,
-  SchemaT extends AnyType<Type, InputT>,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  SchemaT extends AnyType<Type, InputT, any>,
   Value
 > = SchemaT["isRequired"] extends true
   ? ResultRequired<Type, InputT, ParsedValue<Value, DefaultValue<SchemaT>>>

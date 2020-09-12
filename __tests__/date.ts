@@ -75,23 +75,31 @@ describe(".max", () => {
   it("should fail", async () => {
     expect.assertions(2);
 
-    const max = Date.now();
+    const max = new Date();
 
     await sleep(1000);
 
     const now = Date.now();
 
     try {
-      Schema.date().max(max).validate(now);
+      Schema.date()
+        .max(() => max)
+        .validate(now);
     } catch (error) {
       expect(error).toBeInstanceOf(SchemaError);
-      expect(error.details).toEqual(
-        `Expected to be before or same as ${new Date(max)}`,
-      );
+      expect(error.details).toEqual(`Expected to be before or same as ${max}`);
     }
   });
 
-  it("should pass", () => {
+  it("should pass (date passed as max)", () => {
+    const now = Date.now();
+
+    const result = Schema.date().max(new Date()).validate(now);
+
+    expect(result).toEqual(new Date(now));
+  });
+
+  it("should pass (function passed as max)", () => {
     const now = Date.now();
 
     const result = Schema.date().max(Date.now).validate(now);

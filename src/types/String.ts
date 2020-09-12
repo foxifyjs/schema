@@ -1,17 +1,32 @@
 import AnyType from "./Any";
+import { MessageTemplate, Messages } from "../constants";
 
-export default class StringType extends AnyType<string> {
+export default class StringType extends AnyType<string, string, Template> {
+  public get messages(): Messages<Template> {
+    return {
+      ...super.messages,
+      string: "Expected {{ label }} to be a valid string",
+      alphanum: "Expected {{ label }} to only contain a-z, A-Z, 0-9",
+      creditCard: "Expected {{ label }} to be a valid credit-card",
+      email: "Expected {{ label }} to be a valid email address",
+      enum: "Expected {{ label }} to be one of {{ enum }}",
+      ip: "Expected {{ label }} to be a valid {{ type }} address",
+      length:
+        "Expected {{ label }} to contain exactly {{ length }} character(s)",
+      max: "Expected {{ label }} to contain at most {{ max }} character(s)",
+      min: "Expected {{ label }} to contain at least {{ min }} character(s)",
+      numeral: "Expected {{ label }} to only contain numbers",
+      regex: "Expected {{ label }} to match {{ regex }}",
+      token:
+        "Expected {{ label }} to only contain a-z, A-Z, 0-9, underscore (_)",
+    };
+  }
+
   public alphanum(): this {
     return this.pipe((value) => {
       if (/^[a-zA-Z0-9]*$/.test(value)) return value;
 
-      const label = this._label;
-
-      this.fail(
-        label == null
-          ? "Expected to only contain a-z, A-Z, 0-9"
-          : `Expected ${label} to only contain a-z, A-Z, 0-9`,
-      );
+      this.fail(this.render("alphanum"));
     });
   }
 
@@ -19,13 +34,7 @@ export default class StringType extends AnyType<string> {
     return this.pipe((value) => {
       if (isCreditCard(value)) return value;
 
-      const label = this._label;
-
-      this.fail(
-        label == null
-          ? "Expected to be a valid credit-card"
-          : `Expected ${label} to be a valid credit-card`,
-      );
+      this.fail(this.render("creditCard"));
     });
   }
 
@@ -33,13 +42,7 @@ export default class StringType extends AnyType<string> {
     return this.pipe((value) => {
       if (/^\w[\w.]+@\w+?\.[a-zA-Z]{2,3}$/.test(value)) return value;
 
-      const label = this._label;
-
-      this.fail(
-        label == null
-          ? "Expected to be a valid email address"
-          : `Expected ${label} to be a valid email address`,
-      );
+      this.fail(this.render("email"));
     });
   }
 
@@ -49,13 +52,7 @@ export default class StringType extends AnyType<string> {
     return this.pipe((value) => {
       if (values.includes(value)) return value;
 
-      const label = this._label;
-
-      this.fail(
-        label == null
-          ? `Expected to be one of ${type}`
-          : `Expected ${label} to be one of ${type}`,
-      );
+      this.fail(this.render("enum", { enum: type }));
     });
   }
 
@@ -64,13 +61,7 @@ export default class StringType extends AnyType<string> {
       return this.pipe((value) => {
         if (ipv4Regex.test(value)) return value;
 
-        const label = this._label;
-
-        this.fail(
-          label == null
-            ? "Expected to be a valid ipv4 address"
-            : `Expected ${label} to be a valid ipv4 address`,
-        );
+        this.fail(this.render("ip", { type: "ipv4" }));
       });
     }
 
@@ -78,26 +69,14 @@ export default class StringType extends AnyType<string> {
       return this.pipe((value) => {
         if (ipv6Regex.test(value)) return value;
 
-        const label = this._label;
-
-        this.fail(
-          label == null
-            ? "Expected to be a valid ipv6 address"
-            : `Expected ${label} to be a valid ipv6 address`,
-        );
+        this.fail(this.render("ip", { type: "ipv6" }));
       });
     }
 
     return this.pipe((value) => {
       if (ipv4Regex.test(value) || ipv6Regex.test(value)) return value;
 
-      const label = this._label;
-
-      this.fail(
-        label == null
-          ? "Expected to be a valid ip address"
-          : `Expected ${label} to be a valid ip address`,
-      );
+      this.fail(this.render("ip", { type: "ip" }));
     });
   }
 
@@ -105,13 +84,7 @@ export default class StringType extends AnyType<string> {
     return this.pipe((value) => {
       if (value.length === length) return value;
 
-      const label = this._label;
-
-      this.fail(
-        label == null
-          ? `Expected to contain exactly ${length} character(s)`
-          : `Expected ${label} to contain exactly ${length} character(s)`,
-      );
+      this.fail(this.render("length", { length }));
     });
   }
 
@@ -119,13 +92,7 @@ export default class StringType extends AnyType<string> {
     return this.pipe((value) => {
       if (value.length <= max) return value;
 
-      const label = this._label;
-
-      this.fail(
-        label == null
-          ? `Expected to contain at most ${max} character(s)`
-          : `Expected ${label} to contain at most ${max} character(s)`,
-      );
+      this.fail(this.render("max", { max }));
     });
   }
 
@@ -133,13 +100,7 @@ export default class StringType extends AnyType<string> {
     return this.pipe((value) => {
       if (value.length >= min) return value;
 
-      const label = this._label;
-
-      this.fail(
-        label == null
-          ? `Expected to contain at least ${min} character(s)`
-          : `Expected ${label} to contain at least ${min} character(s)`,
-      );
+      this.fail(this.render("min", { min }));
     });
   }
 
@@ -147,13 +108,7 @@ export default class StringType extends AnyType<string> {
     return this.pipe((value) => {
       if (/^\d*$/.test(value)) return value;
 
-      const label = this._label;
-
-      this.fail(
-        label == null
-          ? "Expected to only contain numbers"
-          : `Expected ${label} to only contain numbers`,
-      );
+      this.fail(this.render("numeral"));
     });
   }
 
@@ -161,13 +116,7 @@ export default class StringType extends AnyType<string> {
     return this.pipe((value) => {
       if (regex.test(value)) return value;
 
-      const label = this._label;
-
-      this.fail(
-        label == null
-          ? `Expected to match ${regex}`
-          : `Expected ${label} to match ${regex}`,
-      );
+      this.fail(this.render("regex", { regex }));
     });
   }
 
@@ -175,27 +124,41 @@ export default class StringType extends AnyType<string> {
     return this.pipe((value) => {
       if (/^[a-zA-Z0-9_]*$/.test(value)) return value;
 
-      const label = this._label;
-
-      this.fail(
-        label == null
-          ? "Expected to only contain a-z, A-Z, 0-9, underscore (_)"
-          : `Expected ${label} to only contain a-z, A-Z, 0-9, underscore (_)`,
-      );
+      this.fail(this.render("token"));
     });
   }
 
   protected initialValidator(value: unknown): string {
     if (typeof value === "string") return value;
 
-    const label = this._label;
-
-    this.fail(
-      label == null
-        ? "Expected to be a valid string"
-        : `Expected ${label} to be a valid string`,
-    );
+    this.fail(this.render("string"));
   }
+}
+
+export interface Template extends MessageTemplate {
+  string(): string;
+
+  alphanum(): string;
+
+  creditCard(): string;
+
+  email(): string;
+
+  enum(params: { enum: string }): string;
+
+  ip(params: { type: "ip" | "ipv4" | "ipv6" }): string;
+
+  length(params: { length: number }): string;
+
+  max(params: { max: number }): string;
+
+  min(params: { min: number }): string;
+
+  numeral(): string;
+
+  regex(params: { regex: RegExp }): string;
+
+  token(): string;
 }
 
 const ipv4Regex = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/;

@@ -1,18 +1,23 @@
 import AnyType from "./Any";
+import { MessageTemplate, Messages } from "../constants";
 import SchemaError, { ErrorDetails } from "../Error";
 
-export default class ArrayType<T> extends AnyType<T[]> {
+export default class ArrayType<T> extends AnyType<T[], T[], Template> {
+  public get messages(): Messages<Template> {
+    return {
+      ...super.messages,
+      array: "Expected {{ label }} to be an array",
+      length: "Expected {{ label }} to contain exactly {{ length }} item(s)",
+      max: "Expected {{ label }} to contain at most {{ max }} item(s)",
+      min: "Expected {{ label }} to contain at least {{ min }} item(s)",
+    };
+  }
+
   public length(length: number): this {
     return this.pipe((value) => {
       if (value.length === length) return value;
 
-      const label = this._label;
-
-      this.fail(
-        label == null
-          ? `Expected to contain exactly ${length} item(s)`
-          : `Expected ${label} to contain exactly ${length} item(s)`,
-      );
+      this.fail(this.render("length", { length }));
     });
   }
 
@@ -20,13 +25,7 @@ export default class ArrayType<T> extends AnyType<T[]> {
     return this.pipe((value) => {
       if (value.length <= max) return value;
 
-      const label = this._label;
-
-      this.fail(
-        label == null
-          ? `Expected to contain at most ${max} item(s)`
-          : `Expected ${label} to contain at most ${max} item(s)`,
-      );
+      this.fail(this.render("max", { max }));
     });
   }
 
@@ -34,13 +33,7 @@ export default class ArrayType<T> extends AnyType<T[]> {
     return this.pipe((value) => {
       if (value.length >= min) return value;
 
-      const label = this._label;
-
-      this.fail(
-        label == null
-          ? `Expected to contain at least ${min} item(s)`
-          : `Expected ${label} to contain at least ${min} item(s)`,
-      );
+      this.fail(this.render("min", { min }));
     });
   }
 
@@ -74,14 +67,18 @@ export default class ArrayType<T> extends AnyType<T[]> {
   protected initialValidator(value: unknown): T[] {
     if (Array.isArray(value)) return value;
 
-    const label = this._label;
-
-    this.fail(
-      label == null
-        ? "Expected to be an array"
-        : `Expected ${label} to be an array`,
-    );
+    this.fail(this.render("array"));
   }
+}
+
+export interface Template extends MessageTemplate {
+  array(): string;
+
+  length(params: { length: number }): string;
+
+  max(params: { max: number }): string;
+
+  min(params: { min: number }): string;
 }
 
 export type ItemsType<T> = T extends unknown

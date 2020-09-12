@@ -1,6 +1,16 @@
 import AnyType from "./Any";
+import { MessageTemplate, Messages } from "../constants";
 
-export default class DateType extends AnyType<Date, DateInputType> {
+export default class DateType extends AnyType<Date, DateInputType, Template> {
+  public get messages(): Messages<Template> {
+    return {
+      ...super.messages,
+      date: "Expected {{ label }} to be a valid date",
+      max: "Expected {{ label }} to be before or same as {{ date }}",
+      min: "Expected {{ label }} to be after or same as {{ date }}",
+    };
+  }
+
   public max(max: DateInputType | (() => DateInputType)): this {
     const getMax = getDate(max);
 
@@ -9,13 +19,7 @@ export default class DateType extends AnyType<Date, DateInputType> {
 
       if (value <= date) return value;
 
-      const label = this._label;
-
-      this.fail(
-        label == null
-          ? `Expected to be before or same as ${date}`
-          : `Expected ${label} to be before or same as ${date}`,
-      );
+      this.fail(this.render("max", { date }));
     });
   }
 
@@ -27,13 +31,7 @@ export default class DateType extends AnyType<Date, DateInputType> {
 
       if (value >= date) return value;
 
-      const label = this._label;
-
-      this.fail(
-        label == null
-          ? `Expected to be after or same as ${date}`
-          : `Expected ${label} to be after or same as ${date}`,
-      );
+      this.fail(this.render("min", { date }));
     });
   }
 
@@ -44,13 +42,7 @@ export default class DateType extends AnyType<Date, DateInputType> {
     if (value instanceof Date && value.toString() !== "Invalid Date")
       return value;
 
-    const label = this._label;
-
-    this.fail(
-      label == null
-        ? "Expected to be a valid date"
-        : `Expected ${label} to be a valid date`,
-    );
+    this.fail(this.render("date"));
   }
 }
 
@@ -73,6 +65,14 @@ function getDate(value: DateInputType | (() => DateInputType)): () => Date {
   }
 
   return () => value;
+}
+
+export interface Template extends MessageTemplate {
+  date(): string;
+
+  max(params: { date: Date }): string;
+
+  min(params: { date: Date }): string;
 }
 
 export type DateInputType = Date | string | number;
