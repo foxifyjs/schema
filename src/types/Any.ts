@@ -17,7 +17,7 @@ export default abstract class AnyType<T, I = T> {
 
   public isRequired = false;
 
-  constructor() {
+  public constructor() {
     this.pipe(this.initialValidator.bind(this));
   }
 
@@ -27,8 +27,8 @@ export default abstract class AnyType<T, I = T> {
     return this;
   }
 
-  public pipe(validator: Validator<T>): this {
-    this._pipeline.push(validator);
+  public pipe(...validators: Validator<T>[]): this {
+    this._pipeline = this._pipeline.concat(validators);
 
     return this;
   }
