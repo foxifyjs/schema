@@ -1,22 +1,26 @@
 import AnyType from "./Any";
-import { DefaultValue } from "../constants";
+import { MessageTemplate, Messages, DefaultValue } from "../constants";
 import SchemaError, { ErrorDetails } from "../Error";
 
 export default class ObjectType<
   T extends Record<string, unknown>,
   I = T
-> extends AnyType<T, I> {
+> extends AnyType<T, I, Template> {
+  public get messages(): Messages<Template> {
+    return {
+      ...super.messages,
+      object: "Expected {{ label }} to be an object",
+      length: "Expected {{ label }} to contain exactly {{ length }} key(s)",
+      max: "Expected {{ label }} to contain at most {{ max }} key(s)",
+      min: "Expected {{ label }} to contain at least {{ min }} key(s)",
+    };
+  }
+
   public length(length: number): this {
     return this.pipe((value) => {
       if (Object.keys(value).length === length) return value;
 
-      const label = this._label;
-
-      this.fail<string>(
-        label == null
-          ? `Expected to contain exactly ${length} key(s)`
-          : `Expected ${label} to contain exactly ${length} key(s)`,
-      );
+      this.fail<string>(this.render("length", { length }));
     });
   }
 
@@ -24,13 +28,7 @@ export default class ObjectType<
     return this.pipe((value) => {
       if (Object.keys(value).length <= max) return value;
 
-      const label = this._label;
-
-      this.fail<string>(
-        label == null
-          ? `Expected to contain at most ${max} key(s)`
-          : `Expected ${label} to contain at most ${max} key(s)`,
-      );
+      this.fail<string>(this.render("max", { max }));
     });
   }
 
@@ -38,13 +36,7 @@ export default class ObjectType<
     return this.pipe((value) => {
       if (Object.keys(value).length >= min) return value;
 
-      const label = this._label;
-
-      this.fail<string>(
-        label == null
-          ? `Expected to contain at least ${min} key(s)`
-          : `Expected ${label} to contain at least ${min} key(s)`,
-      );
+      this.fail<string>(this.render("min", { min }));
     });
   }
 
@@ -80,18 +72,23 @@ export default class ObjectType<
   protected initialValidator(value: unknown): T {
     if (value instanceof Object) return value as T;
 
-    const label = this._label;
-
-    this.fail<string>(
-      label == null
-        ? "Expected to be an object"
-        : `Expected ${label} to be an object`,
-    );
+    this.fail<string>(this.render("object"));
   }
 }
 
+export interface Template extends MessageTemplate {
+  object(): string;
+
+  length(params: { length: number }): string;
+
+  max(params: { max: number }): string;
+
+  min(params: { min: number }): string;
+}
+
 export type Keys<T extends Record<string, unknown>> = {
-  [K in keyof T]: AnyType<T[K]>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [K in keyof T]: AnyType<T[K], any, any>;
 };
 
 export type KeysType<T extends Record<string, unknown>> = T extends Record<
