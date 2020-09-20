@@ -8,6 +8,16 @@ import type {
   StringType,
 } from "./types";
 
+/* ------------------------- General ------------------------- */
+
+export type Value<T> = T extends Record<string, unknown>
+  ? { [Key in keyof T]-?: Value<T[Key]> }
+  : T extends (infer U)[]
+  ? Value<U>[]
+  : T extends undefined
+  ? null
+  : T;
+
 /* ------------------------- Messages ------------------------- */
 
 export interface MessageTemplate {

@@ -1,5 +1,12 @@
 import AnyType from "./Any";
-import { MessageTemplate, Messages, DefaultValue } from "../constants";
+import {
+  Value,
+  MessageTemplate,
+  Messages,
+  DefaultValue,
+  WithDefault,
+  WithRequired,
+} from "../constants";
 import SchemaError, { ErrorDetails } from "../Error";
 
 export default class ObjectType<
@@ -40,7 +47,7 @@ export default class ObjectType<
     });
   }
 
-  public keys<K extends KeysType<T>>(type: K): KeysResult<T, K> {
+  public keys<K extends KeysType<Value<T>>>(type: K): KeysResult<Value<T>, K> {
     return this.pipe((value) => {
       const errors: Record<string, unknown> = {};
 
@@ -86,9 +93,12 @@ export interface Template extends MessageTemplate {
   min(params: { min: number }): string;
 }
 
+export type KeyValue<V> = null extends V
+  ? AnyType<NonNullable<V>>
+  : WithDefault<AnyType<V>, V> | WithRequired<AnyType<V>, true>;
+
 export type Keys<T extends Record<string, unknown>> = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [K in keyof T]: AnyType<T[K], any, any>;
+  [K in keyof T]: KeyValue<T[K]>;
 };
 
 export type KeysType<T extends Record<string, unknown>> = T extends Record<
