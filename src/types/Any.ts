@@ -46,13 +46,11 @@ export default abstract class AnyType<
     return this;
   }
 
-  public default<V extends I>(
-    value: V | (() => V),
-  ): WithDefault<this, () => V> {
+  public default<V extends I>(value: V | (() => V)): WithDefault<this, V> {
     if (typeof value === "function") this.getDefault = value as () => V;
     else this.getDefault = () => value;
 
-    return this as WithDefault<this, () => V>;
+    return this as WithDefault<this, V>;
   }
 
   public required<R extends boolean = true>(

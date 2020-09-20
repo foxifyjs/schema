@@ -40,19 +40,15 @@ export type DefaultValue<
 export type WithDefault<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   SchemaT extends AnyType<any, any, any>,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  Default extends DefaultType<any>
-> = SchemaT & {
-  getDefault: Default;
-};
+  Default
+> = SchemaT & { getDefault: () => Default };
 
 export type WithRequired<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   SchemaT extends AnyType<any, any, any>,
   Required extends boolean
-> = SchemaT & {
-  isRequired: Required;
-};
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+> = SchemaT & { isRequired: Required extends false ? any : true };
 
 export type Result<
   Type,
@@ -105,7 +101,7 @@ export interface Schema {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type SchemaType<SchemaT extends AnyType<any, any, any>> = WithDefault<
   SchemaT,
-  () => null
+  null
 >;
 
 export type SchemaReturn<
