@@ -9,6 +9,7 @@
   },
   "license": "MIT",
   "homepage": "https://schema.js.org",
+  "funding": "https://opencollective.com/foxify",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/foxifyjs/schema.git"
