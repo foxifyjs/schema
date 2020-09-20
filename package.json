@@ -77,10 +77,10 @@
   "devDependencies": {
     "@types/jest": "^26.0.14",
     "@types/node": "^14.6.4",
-    "@typescript-eslint/eslint-plugin": "^4.1.0",
-    "@typescript-eslint/parser": "^4.1.0",
+    "@typescript-eslint/eslint-plugin": "^4.1.1",
+    "@typescript-eslint/parser": "^4.1.1",
     "codecov": "^3.7.2",
-    "eslint": "^7.8.1",
+    "eslint": "^7.9.0",
     "jest": "^26.4.2",
     "prettier": "^2.1.2",
     "ts-jest": "^26.4.0",
