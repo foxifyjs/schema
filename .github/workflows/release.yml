@@ -69,8 +69,10 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 12
-          registry-url: https://npm.pkg.github.com/foxifyjs
-          scope: '@foxify'
+          registry-url: https://npm.pkg.github.com/
+          scope: '@foxifyjs'
+      - run: sed -i 's/@foxify\/schema/@foxifyjs\/schema/g' package.json
+      - run: sed -i 's/@foxify\/schema/@foxifyjs\/schema/g' package-lock.json
       - run: npm ci
       - run: npm run build
       - run: npm publish
