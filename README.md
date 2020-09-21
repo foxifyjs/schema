@@ -32,45 +32,58 @@ TypeScript ready object schema validation
 
 ## Getting Started
 
-### Prerequisites
-
-- [Node.js](https://nodejs.org/en/download).
-
 ### Installation
 
+NPM:
+
 ```bash
-npm i -s @foxify/schema
+npm i @foxify/schema
+```
+
+Yarn:
+
+```bash
+yarn add @foxify/schema
+```
+
+Github Packages:
+
+```bash
+npm i @foxifyjs/schema
 ```
 
 ### Usage
 
-```javascript
-const Schema = require("@foxify/schema");
+```typescript
+import Schema from "@foxify/schema";
 
 const schema = {
   username: Schema.string()
     .alphanum()
     .required(),
-  name: {
+  name: Schema.object().keys({
     first: Schema.string()
       .min(3)
       .required(),
     last: Schema.string().min(3),
-  }, // since "name" has a required field, "name" itself would become required too
+  }).required(),
   datetime: Schema.date().default(Date.now),
 };
 
-Schema.validate(schema, value);
-// returns -> { errors, value }
-// error -> null : you're good to go
-// error -> { [path: string]: string[] } : you have a problem
+try {
+  const result = Schema.object().keys(schema).validate(value);
+} catch (error) {
+  // your error handler
+}
 ```
 
-> for more details see [the documents](https://schema.js.org)
+> for more details read [the documents](https://schema.js.org)
 
-## Versioning
+## Sponsors
 
-We use [SemVer](http://semver.org) for versioning. For the versions available, see the [tags on this repository](https://github.com/foxifyjs/schema/tags).
+Support this project by becoming a sponsor. Your logo will show up here. [[Become a sponsor](https://opencollective.com/foxify#sponsor)]
+
+[![Sponsors](https://opencollective.com/foxify/sponsors.svg?width=890)](https://opencollective.com/foxify#sponsors)
 
 ## Authors
 
@@ -78,13 +91,10 @@ We use [SemVer](http://semver.org) for versioning. For the versions available, s
 
 See also the list of [contributors](https://github.com/foxifyjs/schema/contributors) who participated in this project.
 
+## Versioning
+
+We use [SemVer](http://semver.org) for versioning. For the versions available, see the [releases](https://github.com/foxifyjs/schema/releases).
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
-
-## Support
-
-If my work helps you, please consider
-
-[![Buy Me A Coffee](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/ardalanamini)
-[![Become A Patron](https://c5.patreon.com/external/logo/become_a_patron_button.png)](https://www.patreon.com/ardalanamini)

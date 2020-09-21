@@ -71,8 +71,7 @@ jobs:
           node-version: 12
           registry-url: https://npm.pkg.github.com/
           scope: '@foxifyjs'
-      - run: sed -i 's/@foxify\/schema/@foxifyjs\/schema/g' package.json
-      - run: sed -i 's/@foxify\/schema/@foxifyjs\/schema/g' package-lock.json
+      - run: sed -i 's/@foxify\/schema/@foxifyjs\/schema/g' package.json package-lock.json
       - run: npm ci
       - run: npm run build
       - run: npm publish
