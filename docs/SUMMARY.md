@@ -49,6 +49,6 @@
 
 ---
 
-* [Support this package](https://opencollective.com/foxify)
+* [Support this project](https://opencollective.com/foxify)
 * [Source Code](https://github.com/foxifyjs/schema)
 
